@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Customer> Customers {get; set;}
+    public DbSet<CartItem> CartItems {get; set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,5 +30,19 @@ public class AppDbContext : DbContext
             .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired();
+
+        // إعدادات جدول العملاء: جعل البريد الإلكتروني فريدًا (Unique) لمنع تكرار الحسابات 🛡️
+            modelBuilder.Entity<Customer>()
+            .HasIndex(c => c.Email)
+            .IsUnique();
+
+        // إعدادات جدول عناصر السلة
+            modelBuilder.Entity<CartItem>()
+            .HasOne(ci => ci.product)
+            .WithMany()
+            .HasForeignKey(ci => ci.ProductId)
+            .OnDelete(DeleteBehavior.Cascade); // إذا حُذف المنتج تُحذف عناصر السلة المرتبطة به تلقائيًا
+            
+
     }
 }
