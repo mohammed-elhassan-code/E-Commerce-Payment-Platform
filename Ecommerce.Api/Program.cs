@@ -18,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
     builder.Services.AddScoped<IProductRepository  , ProductRepository>();
     builder.Services.AddScoped<ICartRepository , CartRepository>();
+    builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
 // --- 2. تسجيل خدمات طبقة الـ Application ---
     builder.Services.AddScoped<CartService>();
@@ -71,11 +72,19 @@ app.MapGet("/api/health", () => Results.Ok(new { status = "Healthy", platform = 
 // --- مسارات سلة التسوق المحمية والمؤمنة (Cart Endpoints) ---
 
 // 1. مسار جلب عناصر السلة وحساب الإجمالي على السيرفر 🛡️
-app.MapGet("/api/cart" , async (CartService cartService) =>
+app.MapGet("/api/cart" , async ([FromQuery] string? couponCode , [FromServices] CartService cartService) =>
 {
     var mockCustomerId = 1; // محاكاة لعميل مسجل دخول مؤقتًا 👤
-    var cart = await cartService.GetCartAsync(mockCustomerId);
+
+    try
+    {
+    var cart = await cartService.GetCartAsync(mockCustomerId , couponCode);
     return Results.Ok(cart);
+    }
+    catch(ArgumentException ex)
+    {
+        return Results.BadRequest(new { message = ex.Message });
+    }
 });
 
 // 2. مسار إضافة منتج إلى السلة (أو زيادة الكمية)
@@ -103,6 +112,10 @@ app.MapPost("/api/cart/items" , async ([FromBody] AddToCartRequest request ,[Fro
     catch(KeyNotFoundException ex)
     {
         return Results.NotFound(new { message = ex.Message });
+    }
+    catch(InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { message = ex.Message});
     }
 });
 
