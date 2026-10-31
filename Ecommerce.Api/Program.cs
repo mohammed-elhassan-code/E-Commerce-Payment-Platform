@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. تسجيل خدمات البنية التحتية (Infrastructure Services) ---
+//   تسجيل خدمات البنية التحتية (Infrastructure Services) ---
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -20,10 +20,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     builder.Services.AddScoped<ICartRepository , CartRepository>();
     builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
-// --- 2. تسجيل خدمات طبقة الـ Application ---
+//  تسجيل خدمات طبقة الـ Application ---
     builder.Services.AddScoped<CartService>();
 
-// --- 2. إعدادات نظام الأمان والتشفير (JWT Authentication) ---
+//  إعدادات نظام الأمان والتشفير (JWT Authentication) ---
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"] ?? throw new InvalidOperationException("Secret key is missing!");
 
@@ -48,12 +48,15 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// --- 3. أدوات التوثيق لواجهة المستندات OpenAPI & Scalar ---
+//  أدوات التوثيق لواجهة المستندات OpenAPI & Scalar ---
 builder.Services.AddOpenApi();
+
+// تفعيل الـ Distributed Cache في الذاكرة المحلية الفائقة السرعة ⚡
+builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
 
-// --- 4. إعداد خط الإنتاج البرمجي (HTTP Request Pipeline / Middlewares) ---
+//  إعداد خط الإنتاج البرمجي (HTTP Request Pipeline / Middlewares) ---
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

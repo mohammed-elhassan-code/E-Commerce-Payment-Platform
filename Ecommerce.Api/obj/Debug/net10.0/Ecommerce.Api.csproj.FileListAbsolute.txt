@@ -172,3 +172,6 @@ C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Api\obj\Debug\net10.0\r
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Api\obj\Debug\net10.0\Ecommerce.Api.pdb
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Api\obj\Debug\net10.0\Ecommerce.Api.genruntimeconfig.cache
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Api\obj\Debug\net10.0\ref\Ecommerce.Api.dll
+C:\Users\USER\Desktop\BackendTraining\Solution\ecommerce.api\bin\Debug\net10.0\Microsoft.Extensions.Caching.StackExchangeRedis.dll
+C:\Users\USER\Desktop\BackendTraining\Solution\ecommerce.api\bin\Debug\net10.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\USER\Desktop\BackendTraining\Solution\ecommerce.api\bin\Debug\net10.0\StackExchange.Redis.dll
