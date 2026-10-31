@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Customer> Customers {get; set;}
     public DbSet<CartItem> CartItems {get; set;}
+    public DbSet<Coupon> Coupons {get; set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +44,26 @@ public class AppDbContext : DbContext
             .HasForeignKey(ci => ci.ProductId)
             .OnDelete(DeleteBehavior.Cascade); // إذا حُذف المنتج تُحذف عناصر السلة المرتبطة به تلقائيًا
             
+            modelBuilder.Entity<Coupon>()
+            .Property(c => c.DiscountPercentage)
+            .HasPrecision(5 , 2);
+
+            // --- حقن بيانات تجريبية حية (Seed Data) لعام 2026 ---
+            modelBuilder.Entity<Category>().HasData(
+                new Category { Id = 1, Name = "الالكترونيات" }
+            );
+
+
+            modelBuilder.Entity<Product>().HasData(
+            new Product { Id = 1, Name = "iPhone 15 Pro", Price = 1200.00m, Stock = 5, CategoryId = 1 }, // مخزون حرج (5 قطع فقط) 📦
+            new Product { Id = 2, Name = "AirPods Pro", Price = 250.00m, Stock = 50, CategoryId = 1 }
+        );
+
+        modelBuilder.Entity<Coupon>().HasData(
+            new Coupon { Id = 1, Code = "SAVE20", DiscountPercentage = 20.00m, ExpiryDate = new DateTime(2026, 12, 31), IsActive = true }, // كوبون فعال صالح حتى نهاية 2026 ⏳
+            new Coupon { Id = 2, Code = "EXPIRED50", DiscountPercentage = 50.00m, ExpiryDate = new DateTime(2025, 01, 01), IsActive = true } // كوبون منتهي الصلاحية للفحص 🚫
+        );
+
 
     }
 }

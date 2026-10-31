@@ -54,7 +54,14 @@ builder.Services.AddOpenApi();
 // تفعيل الـ Distributed Cache في الذاكرة المحلية الفائقة السرعة ⚡
 builder.Services.AddDistributedMemoryCache();
 
+builder.Services.AddExceptionHandler<Ecommerce.Api.Middlewares.GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+
 var app = builder.Build();
+
+// تفعيل شبكة الأمان للأخطاء العالمية في أول الـ Pipeline 🛡️
+app.UseExceptionHandler(); 
 
 //  إعداد خط الإنتاج البرمجي (HTTP Request Pipeline / Middlewares) ---
 if (app.Environment.IsDevelopment())
@@ -114,10 +121,12 @@ app.MapPost("/api/cart/items" , async ([FromBody] AddToCartRequest request ,[Fro
     }
     catch(KeyNotFoundException ex)
     {
+        // المنتج غير موجود في المتجر أساساً
         return Results.NotFound(new { message = ex.Message });
     }
     catch(InvalidOperationException ex)
     {
+       // الكمية المطلوبة تتجاوز المخزن المتاح حالياً
         return Results.BadRequest(new { message = ex.Message});
     }
 });

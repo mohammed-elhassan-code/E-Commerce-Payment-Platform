@@ -18,4 +18,9 @@ public async Task<Product?> GetByIdAsync(int id)
     {
         return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
     }
+
+    public void Update(Product product)
+    {
+        _context.Products.Update(product); // إعلام الـ EF بتعديل المنتج في الذاكرة
+    }
 }
