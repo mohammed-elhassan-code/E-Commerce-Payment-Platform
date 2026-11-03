@@ -196,7 +196,8 @@ app.MapPost("/api/auth/forgot-password" , async ([FromBody] ForgotPasswordReques
 // مسار تعيين كلمة المرور الجديدة عبر التوكن (Reset Password) 🔐
 app.MapPost("/api/auth/reset-password" , async ([FromBody] ResetPasswordRequest request, [FromServices] IIdentityService IdentityService) =>
 {
-    try{
+    try
+    {
     var result = await IdentityService.ResetPasswordAsync(request);
     return result ? Results.Ok(new { message = "تم تغيير كلمة المرور بنجاح! يمكنك الدخول ببياناتك الجديدة." }) : Results.BadRequest("فشلت العملية");
     }
