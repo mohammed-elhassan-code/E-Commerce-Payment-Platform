@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Customer> Customers {get; set;}
     public DbSet<CartItem> CartItems {get; set;}
     public DbSet<Coupon> Coupons {get; set;}
+    public DbSet<RefreshToken> RefreshTokens {get; set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,12 +33,12 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired();
 
-        // إعدادات جدول العملاء: جعل البريد الإلكتروني فريدًا (Unique) لمنع تكرار الحسابات 🛡️
+            // إعدادات جدول العملاء: جعل البريد الإلكتروني فريدًا (Unique) لمنع تكرار الحسابات 🛡️
             modelBuilder.Entity<Customer>()
             .HasIndex(c => c.Email)
             .IsUnique();
 
-        // إعدادات جدول عناصر السلة
+            // إعدادات جدول عناصر السلة
             modelBuilder.Entity<CartItem>()
             .HasOne(ci => ci.product)
             .WithMany()
@@ -47,6 +48,12 @@ public class AppDbContext : DbContext
             modelBuilder.Entity<Coupon>()
             .Property(c => c.DiscountPercentage)
             .HasPrecision(5 , 2);
+
+            modelBuilder.Entity<RefreshToken>()
+            .HasOne(rt => rt.customer)
+            .WithMany(c => c.RefreshTokens)
+            .HasForeignKey(rt => rt.CustomerId)
+            .OnDelete(DeleteBehavior.Cascade); // إذا حُذف حساب العميل تُحذف توكناته تلقائيًا لحماية البيانات
 
             // --- حقن بيانات تجريبية حية (Seed Data) لعام 2026 ---
             modelBuilder.Entity<Category>().HasData(

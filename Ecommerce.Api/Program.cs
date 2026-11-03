@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Ecommerce.Application.Interfaces;
+using Ecommerce.Infrastructure.Identity;
 using Ecommerce.Application.Services;
 using Ecommerce.Infrastructure.Repositories;
 using Ecommerce.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Ecommerce.Application.dto;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     builder.Services.AddScoped<IProductRepository  , ProductRepository>();
     builder.Services.AddScoped<ICartRepository , CartRepository>();
     builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+    builder.Services.AddScoped<IIdentityService, IdentityService>();
+
 
 //  تسجيل خدمات طبقة الـ Application ---
     builder.Services.AddScoped<CartService>();
@@ -131,5 +135,78 @@ app.MapPost("/api/cart/items" , async ([FromBody] AddToCartRequest request ,[Fro
     }
 });
 
+
+
+// =================================================================
+// --- منظومة مسارات الأمان وإدارة الحسابات (Identity Endpoints) ---
+// =================================================================
+
+// مسار تسجيل حساب جديد وتوليد رابط التفعيل 📧
+app.MapPost("/api/auth/register" , async ( [FromBody] RegisterRequest request , [FromServices] IIdentityService IdentityService) =>
+{
+    try
+    {
+    var result = await IdentityService.RegisterAsync(request);
+    return result ? Results.Ok("تم إنشاء الحساب بنجاح! يرجى مراجعة الـ Terminal لنسخ رابط تفعيل الحساب.") : Results.BadRequest("فشلت عملية التسجيل");
+    }
+    catch(ArgumentException ex)
+    {
+        return Results.BadRequest( new { Message = ex.Message});
+    }
+
+});
+
+// مسار الضغط على رابط الإيميل لتفعيل الحساب برمجياً 🔗
+app.MapGet("/api/auth/confirm-email" , async ([FromQuery] string token , [FromServices] IIdentityService IdentityService) =>
+{
+    var result = await IdentityService.ConfirmEmailAsync(token);
+    return result ? Results.Ok(new { message = "مبروك! تم تفعيل حسابك بنجاح. يمكنك الآن تسجيل الدخول." }) : Results.BadRequest("رابط التفعيل غير صالح أو منتهي الصلاحية.");
+    
+});
+
+// مسار تسجيل الدخول الصارم الصادر للبطاقتين (JWT & Refresh Token) 👤
+app.MapPost("/api/auth/login" , async ([FromBody] LoginRequest request , [FromServices] IIdentityService IdentityService) =>
+{
+    try
+    {
+    var tokenResponse = await IdentityService.LoginAsync(request);
+    return tokenResponse is null ? Results.Unauthorized() : Results.Ok(tokenResponse);
+    }
+    catch(InvalidOperationException ex)
+    {
+        // إرجاع رمز 400 مع رسالة تخبره بضرورة تفعيل الإيميل أولاً 🛡️
+        return Results.BadRequest(new { message = ex.Message});
+    }
+});
+
+// مسار تجديد التوكن تلقائياً في الخلفية (من قبل ال frontend) لحماية العميل (Refresh Token) ⏳
+app.MapPost("/api/auth/refresh" , async ([FromBody] RefreshTokenRequest request , [FromServices] IIdentityService IdentityService) =>
+{
+    var tokenResponse = await IdentityService.RefreshTokenAsync(request);
+    return tokenResponse is null ? Results.BadRequest("جلسة العمل منتهية الصلاحية , يرجى اعادة تسجيل الدخول") : Results.Ok(tokenResponse);
+});
+
+// مسار طلب رابط استعادة كلمة المرور المنسية (Forgot Password)
+app.MapPost("/api/auth/forgot-password" , async ([FromBody] ForgotPasswordRequest request , [FromServices] IIdentityService IdentityService) =>
+{
+    await IdentityService.ForgotPasswordAsync(request);
+    return Results.Ok(new {message = "إذا كان الحساب مسجلاً لدينا، فقد تم إرسال رابط استعادة كلمة المرور، تفقد الـ Terminal."});
+});
+
+// مسار تعيين كلمة المرور الجديدة عبر التوكن (Reset Password) 🔐
+app.MapPost("/api/auth/reset-password" , async ([FromBody] ResetPasswordRequest request, [FromServices] IIdentityService IdentityService) =>
+{
+    try{
+    var result = await IdentityService.ResetPasswordAsync(request);
+    return result ? Results.Ok(new { message = "تم تغيير كلمة المرور بنجاح! يمكنك الدخول ببياناتك الجديدة." }) : Results.BadRequest("فشلت العملية");
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { message = ex.Message });
+    }
+
+});
+
+    
 
 app.Run();
