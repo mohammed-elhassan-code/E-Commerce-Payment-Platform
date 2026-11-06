@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Ecommerce.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,8 @@ public class AppDbContext : DbContext
     public DbSet<CartItem> CartItems {get; set;}
     public DbSet<Coupon> Coupons {get; set;}
     public DbSet<RefreshToken> RefreshTokens {get; set;}
+    public DbSet<Order> Orders {get; set;}
+    public DbSet<OrderItem> OrderItems {get; set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -70,6 +73,31 @@ public class AppDbContext : DbContext
             new Coupon { Id = 1, Code = "SAVE20", DiscountPercentage = 20.00m, ExpiryDate = new DateTime(2026, 12, 31), IsActive = true }, // كوبون فعال صالح حتى نهاية 2026 ⏳
             new Coupon { Id = 2, Code = "EXPIRED50", DiscountPercentage = 50.00m, ExpiryDate = new DateTime(2025, 01, 01), IsActive = true } // كوبون منتهي الصلاحية للفحص 🚫
         );
+
+        // إعدادات جدول الطلبات (Orders)
+        modelBuilder.Entity<Order>()
+        .Property( o => o.TotalAmount)
+        .HasPrecision(18 , 2); // ضبط دقة المبالغ المالية 💰
+
+        modelBuilder.Entity<Order>()
+        .HasOne(o => o.customer)
+        .WithMany()
+        .HasForeignKey( o => o.CustomerId)
+        .OnDelete(DeleteBehavior.Restrict);  // حماية العميل من الحذف العشوائي إذا كان له طلبات
+
+        // إعدادات جدول تفاصيل الطلبات (OrderItems)
+        modelBuilder.Entity<OrderItem>()
+        .Property( oi => oi.Price )
+        .HasPrecision(18 , 2); // تسجيل السعر التاريخي وقت الشراء بدقة
+
+        modelBuilder.Entity<OrderItem>()
+        .HasOne( oi => oi.Order )
+        .WithMany( o => o.OrderItems)
+        .HasForeignKey(oi => oi.OrderId)
+        .OnDelete( DeleteBehavior.Cascade); // إذا حُذف الطلب تُحذف تفاصيله تلقائيًا
+        
+
+
 
 
     }

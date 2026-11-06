@@ -22,10 +22,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     builder.Services.AddScoped<ICartRepository , CartRepository>();
     builder.Services.AddScoped<ICouponRepository, CouponRepository>();
     builder.Services.AddScoped<IIdentityService, IdentityService>();
+    builder.Services.AddScoped<IOrderRepository , OrderRepository>();
+    
 
 
 //  تسجيل خدمات طبقة الـ Application ---
     builder.Services.AddScoped<CartService>();
+    builder.Services.AddScoped<OrderService>();
 
 //  إعدادات نظام الأمان والتشفير (JWT Authentication) ---
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -208,6 +211,32 @@ app.MapPost("/api/auth/reset-password" , async ([FromBody] ResetPasswordRequest 
 
 });
 
+// مسار إنشاء طلب جديد وحجز المخزون وتطبيق الكوبونات عبر الـ Transaction 💳🛡️
+app.MapPost("/api/orders" , async ([FromQuery] String? couponCode , [FromServices] OrderService orderService ) =>
+{
+    var mockCustomerId = 1;
+
+    try
+    {
+    var OrderResponse = await orderService.CreateOrderAsync(mockCustomerId , couponCode);
+    return Results.Created($"/api/orders/{OrderResponse.OrderId}" , OrderResponse);
+    }
+    catch (InvalidOperationException ex)
+    {
+        // صيد أخطاء السلة الفارغة أو نفاد كميات المخزن برمز 400 📦🛑
+        return Results.BadRequest(new { message = ex.Message });
+    }
+    catch (ArgumentException ex)
+    {
+        // صيد خطأ الكوبون المنتهي برمز 400
+        return Results.BadRequest(new { message = ex.Message });
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(new { message = ex.Message });
+    }
+
+});
     
 
 app.Run();
