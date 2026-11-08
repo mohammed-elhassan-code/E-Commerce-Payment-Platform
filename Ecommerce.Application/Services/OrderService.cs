@@ -77,6 +77,9 @@ public class OrderService
                 totalAmount += orderItem.Quantity * orderItem.Price;
             }
 
+            // الإجمالي الأساسي للمنتجات قبل الخصم والضريبة
+            decimal subTotal = totalAmount; 
+
             // --- 🌟 تفعيل كود الخصم واستخدامه برمجياً داخل الفاتورة 🌟 ---
             if (!string.IsNullOrWhiteSpace(couponCode))
             {
@@ -86,7 +89,7 @@ public class OrderService
                 if (coupon != null && coupon.IsActive && coupon.ExpiryDate >= DateTime.UtcNow)
                 {
                     decimal discountAmount = totalAmount * (coupon.DiscountPercentage / 100);
-                    totalAmount -= discountAmount; // خصم القيمة من الفاتورة النهائية للطلب قبل الحفظ بأمان
+                    subTotal -= discountAmount; // السعر بعد الخصم
                 }
                 else
                 {
@@ -94,7 +97,14 @@ public class OrderService
                 }
             }
 
-            order.TotalAmount = totalAmount;
+            // حساب قيمة الضريبة برمجياً على السيرفر بنسبة 15% من السعر الصافي لـ 2026 ⚖️⚡
+            decimal taxRate = 0.15m;
+            decimal calculatedTax = subTotal * taxRate;
+
+             // 3. صياغة الإجمالي النهائي الشامل للضريبة
+            order.TaxAmount = calculatedTax;
+            order.TotalAmount = subTotal + calculatedTax; // المنتجات بعد الخصم مضافًا إليها الضريبة
+
 
             // 4. حفظ الطلب وتعديلات المخزن في قاعدة البيانات
             _orderRepository.Add(order);
@@ -114,6 +124,7 @@ public class OrderService
             return new OrderResponse
             {
                 OrderId = order.Id,
+                TaxAmount = order.TaxAmount, // تمرير قيمة الضريبة الصادقة
                 TotalAmount = order.TotalAmount,
                 Status = order.Status.ToString(),
                 IsPaid = order.IsPaid,

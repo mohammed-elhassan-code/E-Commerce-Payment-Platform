@@ -11,6 +11,7 @@ using Ecommerce.Infrastructure.Repositories;
 using Ecommerce.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Ecommerce.Application.dto;
+using Ecommerce.Infrastructure.Payment;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     builder.Services.AddScoped<ICouponRepository, CouponRepository>();
     builder.Services.AddScoped<IIdentityService, IdentityService>();
     builder.Services.AddScoped<IOrderRepository , OrderRepository>();
-    
+    builder.Services.AddScoped<IPaymentService , PaymentService>();
 
 
 //  تسجيل خدمات طبقة الـ Application ---
@@ -237,6 +238,41 @@ app.MapPost("/api/orders" , async ([FromQuery] String? couponCode , [FromService
     }
 
 });
+
+
+// =================================================================
+// --- منظومة المدفوعات الإلكترونية والإشعارات الفورية (Payment APIs) ---
+// =================================================================
+
+// 1. مسار طلب إنشاء جلسة دفع والحصول على رابط الـ Checkout الخارجي 🔗
+app.MapPost("/api/payment/checkout", async ([FromBody] PaymentRequest request, [FromServices] Ecommerce.Application.Interfaces.IPaymentService paymentService) =>
+{
+    try
+    {
+        var response = await paymentService.CreateCheckoutSessionAsync(request);
+        return Results.Ok(response);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(new { message = ex.Message });
+    }
+});
+
+// 2. بوابة الـ Webhook المستقلة لاستقبال إشارات البنك الفورية وتأكيد الفواتير 🛡️🔥
+app.MapPost("/api/payment/webhook", async ([FromBody] WebhookPayload payload, [FromServices] Ecommerce.Application.Interfaces.IPaymentService paymentService) =>
+{
+    try
+    {
+        var success = await paymentService.ProcessWebhookAsync(payload);
+        return success ? Results.Ok(new { message = "تم معالجة إشعار الدفع وتحديث حالة الطلب بنجاح" }) : Results.BadRequest("فشلت المعالجة");
+    }
+    catch (UnauthorizedAccessException ex)
+    {
+        // صيد محاولات التزوير والاختراق السيبراني برمز الرفض الصارم 401 🚫
+        return Results.Json(new { error = ex.Message }, statusCode: 401);
+    }
+});
+
     
 
 app.Run();

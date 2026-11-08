@@ -2,10 +2,10 @@ using System.Security.Cryptography;
 
 namespace Ecommerce.Domain.Entities;
 
-public enum OrederStatus
+public enum OrderStatus
 {
     Pending,
-    confirmed,
+    Confirmed,
     Shipped,
     Delivered,
     Cancelled
@@ -17,7 +17,8 @@ public class Order
     public int CustomerId {get; set;}
     public Customer customer {get; set;} = null!;
     public decimal TotalAmount {get; set;} // إجمالي المبلغ المطلوب دفعه
-    public OrederStatus Status {get; set;} = OrederStatus.Pending; // حالة الطلب الابتدائية
+    public decimal TaxAmount { get; set; } // تسجيل قيمة الضريبة المحسوبة نقدًا
+    public OrderStatus Status {get; set;} = OrderStatus.Pending; // حالة الطلب الابتدائية
     public bool IsPaid {get; set;} = false;    // هل تم الدفع بنجاح؟
     public string? PaymentTransactionId {get; set;} // رقم المعاملة القادم من بوابة الدفع
 

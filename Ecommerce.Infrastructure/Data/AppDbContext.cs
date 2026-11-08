@@ -80,6 +80,10 @@ public class AppDbContext : DbContext
         .HasPrecision(18 , 2); // ضبط دقة المبالغ المالية 💰
 
         modelBuilder.Entity<Order>()
+        .Property(o => o.TaxAmount)
+        .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Order>()
         .HasOne(o => o.customer)
         .WithMany()
         .HasForeignKey( o => o.CustomerId)

@@ -1,0 +1,41 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Ecommerce.Infrastructure.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddTaxToOrders : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.RenameColumn(
+                name: "Ispaid",
+                table: "Orders",
+                newName: "IsPaid");
+
+            migrationBuilder.AddColumn<decimal>(
+                name: "TaxAmount",
+                table: "Orders",
+                type: "decimal(18,2)",
+                precision: 18,
+                scale: 2,
+                nullable: false,
+                defaultValue: 0m);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "TaxAmount",
+                table: "Orders");
+
+            migrationBuilder.RenameColumn(
+                name: "IsPaid",
+                table: "Orders",
+                newName: "Ispaid");
+        }
+    }
+}
