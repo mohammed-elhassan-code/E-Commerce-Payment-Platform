@@ -12,6 +12,9 @@ using Ecommerce.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Ecommerce.Application.dto;
 using Ecommerce.Infrastructure.Payment;
+using System.ComponentModel.DataAnnotations;
+using Ecommerce.Domain.Entities;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 //  تسجيل خدمات طبقة الـ Application ---
+    builder.Services.AddScoped<ProductService>();
+    builder.Services.AddScoped<CategoryService>();
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
 
@@ -83,8 +88,163 @@ app.UseHttpsRedirection();
 app.UseAuthentication(); // التعرف على الهوية 👤
 app.UseAuthorization();  // التحقق من الصلاحيات 🔐
 
-// --- 5. مسار فحص أولي للتأكد من عمل السيرفر بنجاح ---
-app.MapGet("/api/health", () => Results.Ok(new { status = "Healthy", platform = "E-Commerce & Payment Platform V1" }));
+// مسارات المنتجات (Products Endpoints)
+
+// ----جلب جميع المنتجات
+app.MapGet("/api/products", async (ProductService service)=>
+{
+    var products = await service.GetAllAsync();
+    
+    return products is null? Results.NotFound() : Results.Ok(products);
+    
+}
+ );
+
+ // ----- جلب منتج محدد برقم ال id
+ app.MapGet("/api/products/{id}", async (int id , ProductService service) =>
+ {
+     var product = await service.GetByIdAsync(id);
+
+     return product is null ? Results.NotFound() : Results.Ok(product) ;
+    
+ });
+ 
+ // -----اضافة منتج جديد
+ app.MapPost("/api/products", async (CreateProductRequest request,ProductService service) =>
+ {
+    var validationContext = new ValidationContext(request);
+    var validationResults = new List<ValidationResult>();
+
+    var isValid = Validator.TryValidateObject(
+        request,
+        validationContext,
+        validationResults,
+        validateAllProperties: true);
+
+    if (!isValid)
+    {
+        return Results.ValidationProblem(
+            validationResults
+                .GroupBy(v => v.MemberNames.FirstOrDefault() ?? string.Empty)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(v => v.ErrorMessage ?? "Invalid value").ToArray()
+                ));
+    }
+
+
+    var product = await service.CreateAsync(request);
+    
+    return Results.Created($"/api/products/{product.Id}", product); 
+ }).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+ // ----تعديل بيانات منتج
+  app.MapPut("/api/products/{id}" , async (int id , UpdateProductRequest request , ProductService service) =>
+ {
+     var product = await service.UpdateAsync(id , request);
+
+     if(product is null)
+     {
+         return Results.NotFound();
+     }
+
+     return Results.Ok(product);
+ }).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+ //--- حذف منتج
+ app.MapDelete("/api/products/{id}", async (int id , ProductService service)=>
+{
+    var deleted= await service.DeleteAsync(id);
+
+    if (!deleted)
+    {
+        return Results.NotFound();
+    }
+      return Results.NoContent();
+}).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+
+
+// --- مسارات الفئات( Categories Endpoints)
+
+// جلب فئة محددة برقم ال id
+app.MapGet("/api/categories/{id}", async (int id , CategoryService service) =>
+{
+    var category = await service.GetByIdAsync(id);
+    return category is null ? Results.NotFound() : Results.Ok(category);
+});
+
+
+// جلب جميع الفئات
+app.MapGet("/api/categories", async (CategoryService service)=>
+{
+    var categories = await service.GetAllAsync();
+    
+    return categories is null? Results.NotFound() :  Results.Ok(categories);
+    
+}
+ );
+
+
+// اضافة فئة جديدة
+app.MapPost("/api/categories" , async (CreateCategoryRequest request , CategoryService service) =>
+{
+    var validationContext = new ValidationContext(request);
+    var validationResults = new List<ValidationResult>();
+    var isValid = Validator.TryValidateObject(request, validationContext, validationResults, true);
+
+    if (!isValid)
+    {
+        return Results.ValidationProblem(validationResults
+            .GroupBy(v => v.MemberNames.FirstOrDefault() ?? string.Empty)
+            .ToDictionary(g => g.Key, g => g.Select(v => v.ErrorMessage ?? "Invalid").ToArray()));
+    }
+
+    var category = await service.CreateAsync(request);
+    return Results.Created($"/api/cvategories/{category.Id}", category);
+}).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+
+
+ // --- مسار تعديل بيانات فئة 
+ app.MapPut("/api/categories/{id}" , async (int id , UpdateCategoryRequest request , CategoryService service) =>
+{
+    var validationContext = new ValidationContext(request);
+    var validationResults = new List<ValidationResult>();
+    var isValid = Validator.TryValidateObject(request, validationContext, validationResults, true);
+
+    if (!isValid)
+    {
+        return Results.ValidationProblem(validationResults
+            .GroupBy(v => v.MemberNames.FirstOrDefault() ?? string.Empty)
+            .ToDictionary(g => g.Key, g => g.Select(v => v.ErrorMessage ?? "Invalid").ToArray()));
+    }
+
+    var category = await service.UpdateAsync(id , request);
+    return category is null ? Results.NotFound() : Results.Ok(category);
+}).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+// مسار حذف فئة
+app.MapDelete("/api/categories/{id}" , async (int id , CategoryService service) =>
+{
+    try
+    {
+       var success = await service.DeleteAsync(id);
+        return success ? Results.Ok(new { message = "تم حذف الفئة بنجاح من النظام" }) : Results.BadRequest("فشلت عملية الحذف");
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(new { message = ex.Message });
+    }
+    catch(InvalidOperationException ex)
+    {
+        // صيد خطأ منع الحذف بسبب وجود المنتجات وإرجاعه بكود 400 للمستخدم 📦
+        return Results.BadRequest(new {message = ex.Message});
+    }
+}).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+
+
 
 
 // --- مسارات سلة التسوق المحمية والمؤمنة (Cart Endpoints) ---

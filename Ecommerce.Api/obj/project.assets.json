@@ -3517,11 +3517,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\ecommerce.api\\Ecommerce.Api.csproj",
+      "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Api\\Ecommerce.Api.csproj",
       "projectName": "Ecommerce.Api",
-      "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\ecommerce.api\\Ecommerce.Api.csproj",
+      "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Api\\Ecommerce.Api.csproj",
       "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\ecommerce.api\\obj\\",
+      "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

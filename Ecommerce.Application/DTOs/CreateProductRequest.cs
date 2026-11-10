@@ -13,4 +13,5 @@ public class CreateProductRequest
 
     [Required(ErrorMessage = "يجب تحديد القسم الذي ينتمي إليه المنتج")]
     public int CategoryId { get; set; }
+    public int Stock {get; set;}
 }

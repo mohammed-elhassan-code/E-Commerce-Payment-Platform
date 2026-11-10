@@ -14,13 +14,12 @@ public class ProductRepository:IProductRepository
         _context = context;
     }
 
-public async Task<Product?> GetByIdAsync(int id)
-    {
-        return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-    }
-
-    public void Update(Product product)
-    {
-        _context.Products.Update(product); // إعلام الـ EF بتعديل المنتج في الذاكرة
-    }
+   public async Task<Product?> GetByIdAsync(int id) =>  await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+   public async Task<List<Product>> GetAllAsync() => await _context.Products.ToListAsync();
+    public void Add(Product product) => _context.Products.Add(product);
+    public void Update(Product product) => _context.Products.Update(product); 
+    public void Remove(Product product) => _context.Products.Remove(product);
+    public async Task<bool> SaveChangesAsync() => await _context.SaveChangesAsync() > 0;
+    
+        
 }
