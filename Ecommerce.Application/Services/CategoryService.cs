@@ -22,6 +22,7 @@ public CategoryService(ICategoryRepository categoryRepository)
 
         return new CategoryResponse
         {
+            Id = category.Id,
             Name = category.Name
             
         };
@@ -36,9 +37,11 @@ public CategoryService(ICategoryRepository categoryRepository)
     public async Task<CategoryResponse> CreateAsync(CreateCategoryRequest request)
     {
         var category = new Category { Name = request.Name};
+
         _categoryRepository.Add(category);
         await _categoryRepository.SaveChangesAsync();
-        return new CategoryResponse {  Name = category.Name };
+
+        return new CategoryResponse { Id = category.Id,  Name = category.Name };
     }
 
     public async Task<CategoryResponse?> UpdateAsync(int id , UpdateCategoryRequest request)

@@ -9,3 +9,4 @@ C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.0\refint\Ecommerce.Domain.dll
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.0\Ecommerce.Domain.pdb
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.0\ref\Ecommerce.Domain.dll
+C:\Users\USER\Desktop\BackendTraining\solution\Ecommerce.Domain\obj\Debug\net10.0\Ecommerce.Domain.sourcelink.json

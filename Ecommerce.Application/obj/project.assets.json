@@ -59,8 +59,8 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Domain\\Ecommerce.Domain.csproj": {
-              "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Domain\\Ecommerce.Domain.csproj"
+            "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Domain\\Ecommerce.Domain.csproj": {
+              "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Domain\\Ecommerce.Domain.csproj"
             }
           }
         }
