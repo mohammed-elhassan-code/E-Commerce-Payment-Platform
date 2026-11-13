@@ -31,7 +31,7 @@ public CategoryService(ICategoryRepository categoryRepository)
  public async Task<List<CategoryResponse>> GetAllAsync()
     {
         var categories = await _categoryRepository.GetAllAsync();
-        return categories.Select(c => new CategoryResponse { Name = c.Name}).ToList();
+        return categories.Select(c => new CategoryResponse { Id=c.Id, Name = c.Name}).ToList();
     }
 
     public async Task<CategoryResponse> CreateAsync(CreateCategoryRequest request)
@@ -41,7 +41,7 @@ public CategoryService(ICategoryRepository categoryRepository)
         _categoryRepository.Add(category);
         await _categoryRepository.SaveChangesAsync();
 
-        return new CategoryResponse { Id = category.Id,  Name = category.Name };
+        return new CategoryResponse {  Name = category.Name };
     }
 
     public async Task<CategoryResponse?> UpdateAsync(int id , UpdateCategoryRequest request)
@@ -57,7 +57,7 @@ public CategoryService(ICategoryRepository categoryRepository)
         
         await _categoryRepository.SaveChangesAsync();
 
-        return new CategoryResponse { Name = category.Name};
+        return new CategoryResponse {Id = category.Id , Name = category.Name};
     }
 
     public async Task<bool> DeleteAsync(int id)
