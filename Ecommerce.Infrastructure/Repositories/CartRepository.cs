@@ -18,7 +18,7 @@ public class CartRepository : ICartRepository
     {
         // نستخدم Include لجلب بيانات المنتج وسعره الحقيقي برمجياً من الـ DB 🛡️
         return await _context.CartItems
-        .Include(ci => ci.product)
+        .Include(ci => ci.Product)
         .Where(ci => ci.CustomerId == customerId)
         .ToListAsync();
     }

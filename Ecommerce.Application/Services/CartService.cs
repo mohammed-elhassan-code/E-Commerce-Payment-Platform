@@ -33,8 +33,8 @@ public class CartService
             response.items.Add(new CartItemDto
             {
                 productId = item.ProductId,
-                ProductName = item.product.Name,
-                price = item.product.Price, // جلب السعر الأصلي الحقيقي من قاعدة البيانات
+                ProductName = item.Product.Name,
+                price = item.Product.Price, // جلب السعر الأصلي الحقيقي من قاعدة البيانات
                 Quantity = item.Quantity
             });
         }

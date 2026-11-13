@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  ecommerce-api:
+    image: ecommerce-platform-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5019:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=EcommercePlatformDb;User Id=sa;Password=123;TrustServerCertificate=True;
+    depends_on:
+      - sqlserver
+      - redis
+
+  sqlserver:
+    image: ://microsoft.com
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=123
+    ports:
+      - "1433:1433"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"

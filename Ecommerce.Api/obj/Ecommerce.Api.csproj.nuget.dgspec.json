@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Api\\Ecommerce.Api.csproj": {}
+    "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Api\\Ecommerce.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Api\\Ecommerce.Api.csproj": {
+    "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Api\\Ecommerce.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Api\\Ecommerce.Api.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Api\\Ecommerce.Api.csproj",
         "projectName": "Ecommerce.Api",
-        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Api\\Ecommerce.Api.csproj",
+        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Api\\Ecommerce.Api.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Api\\obj\\",
+        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,8 +33,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj"
+              "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj"
               }
             }
           }
@@ -516,14 +516,14 @@
         }
       }
     },
-    "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj": {
+    "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
         "projectName": "Ecommerce.Application",
-        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
+        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\obj\\",
+        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1202,14 +1202,14 @@
         }
       }
     },
-    "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj": {
+    "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj",
         "projectName": "Ecommerce.Infrastructure",
-        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj",
+        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1231,8 +1231,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj": {
-                "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj"
+              "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj": {
+                "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj"
               }
             }
           }

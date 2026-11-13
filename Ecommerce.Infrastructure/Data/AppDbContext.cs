@@ -43,7 +43,7 @@ public class AppDbContext : DbContext
 
             // إعدادات جدول عناصر السلة
             modelBuilder.Entity<CartItem>()
-            .HasOne(ci => ci.product)
+            .HasOne(ci => ci.Product)
             .WithMany()
             .HasForeignKey(ci => ci.ProductId)
             .OnDelete(DeleteBehavior.Cascade); // إذا حُذف المنتج تُحذف عناصر السلة المرتبطة به تلقائيًا

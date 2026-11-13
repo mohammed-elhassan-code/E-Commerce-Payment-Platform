@@ -28,6 +28,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     builder.Services.AddScoped<IIdentityService, IdentityService>();
     builder.Services.AddScoped<IOrderRepository , OrderRepository>();
     builder.Services.AddScoped<IPaymentService , PaymentService>();
+    builder.Services.AddScoped<ICategoryRepository , CategoryRepository>();
 
 
 //  تسجيل خدمات طبقة الـ Application ---
@@ -70,6 +71,17 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddExceptionHandler<Ecommerce.Api.Middlewares.GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+//اعداد سياسة CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowStoreFrontend", policy =>
+    {
+        policy.WithOrigins("https://my-secure-store.com") // رابط واجهة المتجر الحقيقي المعتمد للشركة 🌐
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -84,6 +96,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowStoreFrontend"); // تفعيل درع حماية الطلبات الخارجية (تفعيل سياسة CORS) 🛡️
+
 
 app.UseAuthentication(); // التعرف على الهوية 👤
 app.UseAuthorization();  // التحقق من الصلاحيات 🔐

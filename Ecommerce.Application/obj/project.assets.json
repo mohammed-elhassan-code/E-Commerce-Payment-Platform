@@ -33,11 +33,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
+      "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
       "projectName": "Ecommerce.Application",
-      "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
+      "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
       "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\obj\\",
+      "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
