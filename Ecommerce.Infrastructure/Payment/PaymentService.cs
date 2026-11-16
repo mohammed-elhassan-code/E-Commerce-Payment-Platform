@@ -72,7 +72,7 @@ public class PaymentService : IPaymentService
             ?? throw new InvalidOperationException("WebhookSecret is missing in appsettings.json!");
 
         Event stripeEvent;
-
+        
         try
         {
             // التحقق التشفيري من صحة الإشارة وأنها قادمة فعلاً من خوادم Stripe

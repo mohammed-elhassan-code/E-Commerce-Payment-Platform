@@ -452,8 +452,17 @@ app.MapPost("/api/payment/webhook", async (
     }
     catch (UnauthorizedAccessException ex)
     {
+       
         return Results.Json(new { error = ex.Message }, statusCode: 401);
+        
     }
 });
+
+// لتوجيه المتصفح  لصفحة نجاح عملية الدفع
+app.MapGet("/payment-success", (int orderId) => Results.Ok($"تم الدفع بنجاح للطلب رقم #{orderId} (في انتظار تأكيد الـ Webhook)."));
+
+// لتوجيه المتصفح  لصفحة الغاء عملية الدفع
+app.MapGet("/payment-cancel", (int orderId) => Results.Ok($"تم إلغاء عملية الدفع للطلب رقم #{orderId}."));
+
 
 app.Run();
