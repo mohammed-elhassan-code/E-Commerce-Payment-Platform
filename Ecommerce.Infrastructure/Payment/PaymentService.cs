@@ -3,80 +3,146 @@ using Ecommerce.Application.Interfaces;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Stripe;
+using Stripe.Checkout;
 
 namespace Ecommerce.Infrastructure.Payment;
 
 public class PaymentService : IPaymentService
 {
     private readonly AppDbContext _context;
+    private readonly IConfiguration _configuration;
 
-    public PaymentService(AppDbContext context)
+    public PaymentService(AppDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
+
+        // تهيئة المفتاح السري لبوابة Stripe
+        StripeConfiguration.ApiKey = _configuration["StripeSettings:SecretKey"];
     }
 
-    // 1. توليد رابط الدفع التجريبي (Sandbox Session)
+    // 1. إنشاء جلسة دفع حقيقية وإرجاع رابط يعمل في المتصفح
     public async Task<PaymentResponse> CreateCheckoutSessionAsync(PaymentRequest request)
     {
         var order = await _context.Orders.FindAsync(request.OrderId);
-        if (order is null) throw new KeyNotFoundException("الطلب المالي المحدد غير موجود في النظام!");
+        if (order is null)
+            throw new KeyNotFoundException("الطلب المالي المحدد غير موجود!");
 
-        // توليد رابط دفع محاكي آمن لبوابة الدفع (Sandbox) يضم المعرف وقيمة الفاتورة الشاملة للضريبة
-        string sandboxUrl = $"https://paymentgateway.com{order.Id}&amount={order.TotalAmount}";
+        if (order.IsPaid || order.Status == OrderStatus.Confirmed)
+            throw new InvalidOperationException("هذا الطلب مدفوع ومؤكد مسبقاً!");
+
+        var options = new SessionCreateOptions // انشاء كائن من الكلاس stripe.checkout.sessionCreateOptions
+        {
+          Mode = "payment",
+          SuccessUrl = $"http://localhost:5123/payment-success?orderId={order.Id}", // في المشاريع الحقيقية مسؤولية وضع هذا الرابط هو frontend لتوجيهه لصفحة معينة في الموقع مثل https://mystore.com 
+          CancelUrl = $"http://localhost:5123/payment-cancel?orderId={order.Id}", // في المشاريع الحقيقية مسؤولية وضع هذا الرابط هو frontend لتوجيهه لصفحة معينة في الموقع مثل https://mystore.com
+          ClientReferenceId = order.Id.ToString(),
+          ExpiresAt = DateTime.UtcNow.AddMinutes(30),
+          LineItems = new List<SessionLineItemOptions>
+            {
+              new SessionLineItemOptions
+               {
+                 PriceData = new SessionLineItemPriceDataOptions
+                  {
+                   Currency = "usd",
+                   UnitAmount = (long)(order.TotalAmount * 100), // نقوم بضرب الاجمالي في 100 لان stripe تتعامل بالسنت
+                   ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                       Name = $"Order #{order.Id} - E-Commerce Platform"
+                    }
+                  },
+                Quantity = 1
+                }
+            }
+        };
+
         
-        return new PaymentResponse { CheckoutUrl = sandboxUrl };
+        var service = new SessionService(); // انشاء كائن من الكلاس Stripe.checkout.sessionService
+        Session session = await service.CreateAsync(options);
+
+        return new PaymentResponse { CheckoutUrl = session.Url };
     }
 
-    // 2. معالجة إشعارات الدفع الفورية (Webhook Receiver) ومنع التكرار مرتين 🛡️🔥
-    public async Task<bool> ProcessWebhookAsync(WebhookPayload payload)
+    // 2. معالجة إشعارات Stripe الحقيقية والتحقق من التوقيع المشفر
+    public async Task<bool> ProcessStripeWebhookAsync(string rawJson, string stripeSignature)
     {
-        // درع التحقق السيبراني (Signature Verification): فحص التوقيع لمنع المخترقين من تزوير دفع الطلبات يدوياً
-        if (payload.Signature != "SECURE_BANK_SIGNATURE_2026")
+        var webhookSecret = _configuration["StripeSettings:WebhookSecret"]
+            ?? throw new InvalidOperationException("WebhookSecret is missing in appsettings.json!");
+
+        Event stripeEvent;
+
+        try
         {
-            throw new UnauthorizedAccessException("تحذير أمني: إشارة الـ Webhook غير موثوقة والتوقيع مزور!");
+            // التحقق التشفيري من صحة الإشارة وأنها قادمة فعلاً من خوادم Stripe
+            stripeEvent = EventUtility.ConstructEvent(rawJson, stripeSignature, webhookSecret);
+        }
+        catch (StripeException ex)
+        {
+            // التوقيع مزور أو غير صالح
+            throw new UnauthorizedAccessException($"فشل التحقق من توقيع Stripe Webhook: {ex.Message}");
         }
 
-        // جلب الطلب المستهدف بقفل المعاملة
+        // استخراج كائن الجلسة (Session) من الحدث
+        var session = stripeEvent.Data.Object as Session;
+        if (session is null || string.IsNullOrEmpty(session.ClientReferenceId))
+            return false;
+
+        if (!int.TryParse(session.ClientReferenceId, out int orderId))
+            return false;
+
+        // جلب الطلب مع عناصره من قاعدة البيانات
         var order = await _context.Orders
             .Include(o => o.OrderItems)
-            .FirstOrDefaultAsync(o => o.Id == payload.OrderId);
+            .FirstOrDefaultAsync(o => o.Id == orderId);
 
-        if (order is null) return false;
+        if (order is null)
+            return false;
 
-        // درع منع تكرار معالجة الدفع (Idempotency Guard) 🛑
-        // إذا كان الطلب مدفوعاً مسبقاً، نوقف العملية فوراً لمنع التلاعب بالمخزن أو تكرار الإشعارات
-        if (order.IsPaid || order.Status == OrderStatus.Confirmed)
+        // -------------------------------------------------------------
+        // السيناريو الأول: نجاح عملية الدفع (checkout.session.completed)
+        // -------------------------------------------------------------
+        if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
         {
-            Console.WriteLine($"[WEBHOOK WARNING] الطلب رقم ({order.Id}) مدفوع ومؤكد مسبقًا. تم تجاهل الإشارة المكررة بأمان.");
-            return true; 
-        }
+            // درع منع التكرار (Idempotency Guard)
+            if (order.IsPaid || order.Status == OrderStatus.Confirmed)
+                return true;
 
-        if (payload.EventType == "payment.succeeded")
-        {
-            // تحديث البيانات المالية بأمان كامل وضبط الحالات
             order.IsPaid = true;
-            order.Status = OrderStatus.Confirmed; // نقل حالة الطلب من Pending إلى Confirmed 🚀
-            order.PaymentTransactionId = payload.TransactionId;
+            order.Status = OrderStatus.Confirmed;
+            order.PaymentTransactionId = session.PaymentIntentId ?? session.Id;
 
             _context.Orders.Update(order);
             return await _context.SaveChangesAsync() > 0;
         }
 
-        if (payload.EventType == "payment.failed")
+        // -------------------------------------------------------------
+        // السيناريو الثاني: انتهاء صلاحية جلسة الدفع دون سداد (checkout.session.expired)
+        // -------------------------------------------------------------
+        if (stripeEvent.Type == EventTypes.CheckoutSessionExpired)
         {
-             order.Status = OrderStatus.Cancelled; // إلغاء الطلب إذا فشل السحب
+            // نتأكد أن الطلب لم يُدفع ولم يُلغَ مسبقاً لمنع إعادة المخزون مرتين
+            if (order.IsPaid || order.Status == OrderStatus.Cancelled)
+                return true;
+
+            order.Status = OrderStatus.Cancelled;
             _context.Orders.Update(order);
-            
-            // في الشركات الكبرى، نقوم بإعادة كميات المنتجات المشتراة إلى المخزن (Stock) تلقائياً إذا ألغي الدفع! 📦🔄
+
+            // إعادة الكميات المحجوزة إلى مخزن المنتجات تلقائياً
             foreach (var item in order.OrderItems)
             {
                 var product = await _context.Products.FindAsync(item.ProductId);
-                if (product != null) product.Stock += item.Quantity; // إرجاع السلعة للمستودع
+                if (product != null)
+                {
+                    product.Stock += item.Quantity;
+                    _context.Products.Update(product);
+                }
             }
-            
+
             return await _context.SaveChangesAsync() > 0;
         }
 
-        return false;
+        return true;
     }
 }

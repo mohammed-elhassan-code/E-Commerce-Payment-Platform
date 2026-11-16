@@ -10,7 +10,8 @@
         "dependencies": {
           "Ecommerce.Application": "1.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.14",
-          "Microsoft.Extensions.Caching.StackExchangeRedis": "10.0.14"
+          "Microsoft.Extensions.Caching.StackExchangeRedis": "10.0.14",
+          "Stripe.net": "53.1.0"
         },
         "runtime": {
           "Ecommerce.Infrastructure.dll": {}
@@ -60,7 +61,7 @@
           "Microsoft.IdentityModel.JsonWebTokens": "7.7.1",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.7.1",
           "Microsoft.SqlServer.Server": "1.0.0",
-          "System.Configuration.ConfigurationManager": "9.0.11",
+          "System.Configuration.ConfigurationManager": "10.0.0",
           "System.IdentityModel.Tokens.Jwt": "7.7.1"
         },
         "runtime": {
@@ -223,7 +224,7 @@
       "Microsoft.Identity.Client.Extensions.Msal/4.78.0": {
         "dependencies": {
           "Microsoft.Identity.Client": "4.84.2",
-          "System.Security.Cryptography.ProtectedData": "9.0.11"
+          "System.Security.Cryptography.ProtectedData": "10.0.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.Identity.Client.Extensions.Msal.dll": {
@@ -344,6 +345,14 @@
           }
         }
       },
+      "Newtonsoft.Json/13.0.3": {
+        "runtime": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.3.27908"
+          }
+        }
+      },
       "Pipelines.Sockets.Unofficial/2.2.8": {
         "runtime": {
           "lib/net5.0/Pipelines.Sockets.Unofficial.dll": {
@@ -363,6 +372,18 @@
           }
         }
       },
+      "Stripe.net/53.1.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "System.Configuration.ConfigurationManager": "10.0.0"
+        },
+        "runtime": {
+          "lib/net10.0/Stripe.net.dll": {
+            "assemblyVersion": "53.1.0.0",
+            "fileVersion": "53.1.0.0"
+          }
+        }
+      },
       "System.ClientModel/1.8.0": {
         "dependencies": {
           "System.Memory.Data": "8.0.1"
@@ -374,14 +395,14 @@
           }
         }
       },
-      "System.Configuration.ConfigurationManager/9.0.11": {
+      "System.Configuration.ConfigurationManager/10.0.0": {
         "dependencies": {
-          "System.Security.Cryptography.ProtectedData": "9.0.11"
+          "System.Security.Cryptography.ProtectedData": "10.0.0"
         },
         "runtime": {
-          "lib/net9.0/System.Configuration.ConfigurationManager.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.1125.51716"
+          "lib/net10.0/System.Configuration.ConfigurationManager.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.25.52411"
           }
         }
       },
@@ -405,11 +426,11 @@
           }
         }
       },
-      "System.Security.Cryptography.ProtectedData/9.0.11": {
+      "System.Security.Cryptography.ProtectedData/10.0.0": {
         "runtime": {
-          "lib/net9.0/System.Security.Cryptography.ProtectedData.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.1125.51716"
+          "lib/net10.0/System.Security.Cryptography.ProtectedData.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.25.52411"
           }
         }
       },
@@ -587,6 +608,13 @@
       "path": "microsoft.sqlserver.server/1.0.0",
       "hashPath": "microsoft.sqlserver.server.1.0.0.nupkg.sha512"
     },
+    "Newtonsoft.Json/13.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ==",
+      "path": "newtonsoft.json/13.0.3",
+      "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
+    },
     "Pipelines.Sockets.Unofficial/2.2.8": {
       "type": "package",
       "serviceable": true,
@@ -601,6 +629,13 @@
       "path": "stackexchange.redis/2.7.27",
       "hashPath": "stackexchange.redis.2.7.27.nupkg.sha512"
     },
+    "Stripe.net/53.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Y9MJtM8PKYO6JxEqUFd6Fv6PlkTAoAvF5n0ZKz8nJWFJxKyoAwrSZlI5MUQCT5zrG9zAipB9sV2bk4xX7Lb8Ng==",
+      "path": "stripe.net/53.1.0",
+      "hashPath": "stripe.net.53.1.0.nupkg.sha512"
+    },
     "System.ClientModel/1.8.0": {
       "type": "package",
       "serviceable": true,
@@ -608,12 +643,12 @@
       "path": "system.clientmodel/1.8.0",
       "hashPath": "system.clientmodel.1.8.0.nupkg.sha512"
     },
-    "System.Configuration.ConfigurationManager/9.0.11": {
+    "System.Configuration.ConfigurationManager/10.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-vPinosRgEk1CGjohbv0pDuz6gPprkWo5xvBTjOJjks5JOgOEWvPndq5NngGxiTcBcy1+k9GwzZ1c3Bp2fU5ezw==",
-      "path": "system.configuration.configurationmanager/9.0.11",
-      "hashPath": "system.configuration.configurationmanager.9.0.11.nupkg.sha512"
+      "sha512": "sha512-0B+BzJ6pPMrRzJrVsttKf9MfDj6Syw9xoY+agcS9VssYQali1446+jTf5v1K94AMFUBxLXqDZlaTjO5edaI3jA==",
+      "path": "system.configuration.configurationmanager/10.0.0",
+      "hashPath": "system.configuration.configurationmanager.10.0.0.nupkg.sha512"
     },
     "System.IdentityModel.Tokens.Jwt/7.7.1": {
       "type": "package",
@@ -629,12 +664,12 @@
       "path": "system.memory.data/8.0.1",
       "hashPath": "system.memory.data.8.0.1.nupkg.sha512"
     },
-    "System.Security.Cryptography.ProtectedData/9.0.11": {
+    "System.Security.Cryptography.ProtectedData/10.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-s8yUYuYYu+PAwvBdhLG1KyrGrk9gkYeuPxfAsXsTqqWyepwSyEw8hAaflW4nO98NG52YpYI1am2+9o+79h2RtQ==",
-      "path": "system.security.cryptography.protecteddata/9.0.11",
-      "hashPath": "system.security.cryptography.protecteddata.9.0.11.nupkg.sha512"
+      "sha512": "sha512-qy6C3gQRTrfhFfuiIYU1jNwWfFdJpBVo1BARW7jgMm1zTEm3LRzLLyOLJGaAuKE+nZCGkEP71y4rj9NWjqLGdQ==",
+      "path": "system.security.cryptography.protecteddata/10.0.0",
+      "hashPath": "system.security.cryptography.protecteddata.10.0.0.nupkg.sha512"
     },
     "Ecommerce.Application/1.0.0": {
       "type": "project",

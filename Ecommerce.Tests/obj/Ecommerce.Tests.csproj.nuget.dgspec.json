@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj": {}
+    "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj": {
+    "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
         "projectName": "Ecommerce.Application",
-        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
+        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\obj\\",
+        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -690,14 +690,14 @@
         }
       }
     },
-    "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj": {
+    "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj",
         "projectName": "Ecommerce.Tests",
-        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj",
+        "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Tests\\obj\\",
+        "outputPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -719,8 +719,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj": {
-                "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Application\\Ecommerce.Application.csproj"
+              "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj": {
+                "projectPath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj"
               }
             }
           }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZXeWtau8rhA=",
+  "dgSpecHash": "RYJFM4kRd64=",
   "success": true,
-  "projectFilePath": "C:\\Users\\USER\\Desktop\\BackendTraining\\solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj",
+  "projectFilePath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Tests\\Ecommerce.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\USER\\.nuget\\packages\\castle.core\\5.2.1\\castle.core.5.2.1.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\coverlet.collector\\6.0.4\\coverlet.collector.6.0.4.nupkg.sha512",

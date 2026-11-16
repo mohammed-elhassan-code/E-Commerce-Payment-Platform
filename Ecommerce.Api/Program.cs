@@ -112,8 +112,7 @@ app.MapGet("/api/products", async (ProductService service)=>
     
     return products is null? Results.NotFound() : Results.Ok(products);
     
-}
- );
+});
 
  // ----- جلب منتج محدد برقم ال id
  app.MapGet("/api/products/{id}", async (int id , ProductService service) =>
@@ -257,8 +256,6 @@ app.MapDelete("/api/categories/{id}" , async (int id , CategoryService service) 
         return Results.BadRequest(new {message = ex.Message});
     }
 }).RequireAuthorization(policy => policy.RequireRole("Admin"));
-
-
 
 
 
@@ -433,21 +430,30 @@ app.MapPost("/api/payment/checkout", async ([FromBody] PaymentRequest request, [
     }
 });
 
-// 2. بوابة الـ Webhook المستقلة لاستقبال إشارات البنك الفورية وتأكيد الفواتير 🛡️🔥
-app.MapPost("/api/payment/webhook", async ([FromBody] WebhookPayload payload, [FromServices] Ecommerce.Application.Interfaces.IPaymentService paymentService) =>
+// 2. بوابة استقبال إشعارات Stripe الحقيقية
+app.MapPost("/api/payment/webhook", async (
+    HttpRequest httpRequest,
+    [FromServices] Ecommerce.Application.Interfaces.IPaymentService paymentService) =>
 {
+    // 1. قراءة النص الخام القادم من Stripe كما هو تماماً
+    using var reader = new StreamReader(httpRequest.Body);
+    var rawJson = await reader.ReadToEndAsync();
+
+    // 2. استخراج ترويسة التوقيع الأمني
+    var stripeSignature = httpRequest.Headers["Stripe-Signature"].ToString();
+
+    if (string.IsNullOrEmpty(stripeSignature))
+        return Results.BadRequest(new { error = "ترويسة Stripe-Signature مفقودة!" });
+
     try
     {
-        var success = await paymentService.ProcessWebhookAsync(payload);
-        return success ? Results.Ok(new { message = "تم معالجة إشعار الدفع وتحديث حالة الطلب بنجاح" }) : Results.BadRequest("فشلت المعالجة");
+        var success = await paymentService.ProcessStripeWebhookAsync(rawJson, stripeSignature);
+        return success ? Results.Ok() : Results.BadRequest();
     }
     catch (UnauthorizedAccessException ex)
     {
-        // صيد محاولات التزوير والاختراق السيبراني برمز الرفض الصارم 401 🚫
         return Results.Json(new { error = ex.Message }, statusCode: 401);
     }
 });
-
-    
 
 app.Run();
