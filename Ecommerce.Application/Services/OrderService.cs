@@ -144,4 +144,31 @@ public class OrderService
             throw; // إعادة رمي الخطأ لتلتقطه شبكة الأمان العالمية أو الـ Endpoint
         }
     }
+
+    public async Task<OrderResponse> GetOrderByIdAsync(int orderId, int customerId)
+    {
+    var order = await _orderRepository.GetByIdAsync(orderId);
+    if (order is null)
+        throw new KeyNotFoundException("الطلب المحدد غير موجود!");
+
+    // درع التحقق من الملكية: منع العميل من الاطلاع على فواتير عملاء آخرين
+    if (order.CustomerId != customerId)
+        throw new UnauthorizedAccessException("غير مصرح لك بعرض تفاصيل هذا الطلب!");
+
+    return new OrderResponse
+    {
+        OrderId = order.Id,
+        TaxAmount = order.TaxAmount,
+        TotalAmount = order.TotalAmount,
+        Status = order.Status.ToString(),
+        IsPaid = order.IsPaid,
+        Items = order.OrderItems.Select(oi => new OrderItemResponseDto
+        {
+            ProductId = oi.ProductId,
+            ProductName = oi.Product?.Name ?? "منتج غير معروف",
+            Quantity = oi.Quantity,
+            Price = oi.Price
+        }).ToList()
+    };
+   }
 }

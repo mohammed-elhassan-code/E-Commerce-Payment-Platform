@@ -415,6 +415,31 @@ app.MapPost("/api/orders" , async (ClaimsPrincipal user ,[FromQuery] String? cou
 
 }).RequireAuthorization(); // إجبار المستخدم على إرسال التوكن في الترويسة
 
+// مسار عرض تفاصيل طلب محدد مع التحقق من الملكية
+app.MapGet("/api/orders/{id}", async (
+    int id,
+    ClaimsPrincipal user,
+    [FromServices] OrderService orderService) =>
+{
+    int customerId = user.GetCustomerId();
+
+    try
+    {
+        var orderResponse = await orderService.GetOrderByIdAsync(id, customerId);
+        return Results.Ok(orderResponse);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(new { message = ex.Message });
+    }
+    catch (UnauthorizedAccessException ex)
+    {
+        return Results.Json(new { message = ex.Message }, statusCode: 403);
+    }
+})
+.RequireAuthorization();
+
+
 
 // =================================================================
 // --- منظومة المدفوعات الإلكترونية والإشعارات الفورية (Payment APIs) ---
