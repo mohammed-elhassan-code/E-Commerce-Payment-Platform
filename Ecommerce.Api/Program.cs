@@ -196,8 +196,7 @@ app.MapGet("/api/categories", async (CategoryService service)=>
     
     return categories is null? Results.NotFound() :  Results.Ok(categories);
     
-}
- );
+});
 
 
 // اضافة فئة جديدة
@@ -275,7 +274,7 @@ app.MapGet("/api/cart" , async ([FromQuery] string? couponCode , [FromServices] 
     {
         return Results.BadRequest(new { message = ex.Message });
     }
-});
+}).RequireAuthorization();
 
 // 2. مسار إضافة منتج إلى السلة (أو زيادة الكمية)
 app.MapPost("/api/cart/items" , async ([FromBody] AddToCartRequest request ,[FromServices] CartService cartservice) =>
@@ -309,7 +308,7 @@ app.MapPost("/api/cart/items" , async ([FromBody] AddToCartRequest request ,[Fro
        // الكمية المطلوبة تتجاوز المخزن المتاح حالياً
         return Results.BadRequest(new { message = ex.Message});
     }
-});
+}).RequireAuthorization();
 
 
 
@@ -409,7 +408,7 @@ app.MapPost("/api/orders" , async ([FromQuery] String? couponCode , [FromService
         return Results.NotFound(new { message = ex.Message });
     }
 
-});
+}).RequireAuthorization();
 
 
 // =================================================================
@@ -428,7 +427,7 @@ app.MapPost("/api/payment/checkout", async ([FromBody] PaymentRequest request, [
     {
         return Results.NotFound(new { message = ex.Message });
     }
-});
+}).RequireAuthorization();
 
 // 2. بوابة استقبال إشعارات Stripe الحقيقية
 app.MapPost("/api/payment/webhook", async (
