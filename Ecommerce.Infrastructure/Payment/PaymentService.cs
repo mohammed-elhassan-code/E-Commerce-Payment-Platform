@@ -24,11 +24,15 @@ public class PaymentService : IPaymentService
     }
 
     // 1. إنشاء جلسة دفع حقيقية وإرجاع رابط يعمل في المتصفح
-    public async Task<PaymentResponse> CreateCheckoutSessionAsync(PaymentRequest request)
+    public async Task<PaymentResponse> CreateCheckoutSessionAsync(int customerId ,PaymentRequest request)
     {
         var order = await _context.Orders.FindAsync(request.OrderId);
         if (order is null)
             throw new KeyNotFoundException("الطلب المالي المحدد غير موجود!");
+
+            // درع التحقق من الملكية (Ownership Guard): منع الدفع لطلب يخص عميلاً آخر
+    if (order.CustomerId != customerId)
+        throw new UnauthorizedAccessException("غير مصرح لك بالوصول إلى هذا الطلب أو إتمام الدفع له!");
 
         if (order.IsPaid || order.Status == OrderStatus.Confirmed)
             throw new InvalidOperationException("هذا الطلب مدفوع ومؤكد مسبقاً!");

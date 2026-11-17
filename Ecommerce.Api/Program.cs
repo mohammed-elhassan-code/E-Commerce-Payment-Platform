@@ -264,13 +264,13 @@ app.MapDelete("/api/categories/{id}" , async (int id , CategoryService service) 
 // --- مسارات سلة التسوق المحمية والمؤمنة (Cart Endpoints) ---
 
 // 1. مسار جلب عناصر السلة وحساب الإجمالي على السيرفر 🛡️
-app.MapGet("/api/cart" , async ([FromQuery] string? couponCode , [FromServices] CartService cartService) =>
+app.MapGet("/api/cart" , async (ClaimsPrincipal user , [FromQuery] string? couponCode , [FromServices] CartService cartService) =>
 {
-    var mockCustomerId = 1; // محاكاة لعميل مسجل دخول مؤقتًا 👤
+    int customerId = user.GetCustomerId(); // استخراج الرقم الحقيقي من التوكن
 
     try
     {
-    var cart = await cartService.GetCartAsync(mockCustomerId , couponCode);
+    var cart = await cartService.GetCartAsync(customerId , couponCode);
     return Results.Ok(cart);
     }
     catch(ArgumentException ex)
@@ -421,18 +421,25 @@ app.MapPost("/api/orders" , async (ClaimsPrincipal user ,[FromQuery] String? cou
 // =================================================================
 
 // 1. مسار طلب إنشاء جلسة دفع والحصول على رابط الـ Checkout الخارجي 🔗
-app.MapPost("/api/payment/checkout", async ([FromBody] PaymentRequest request, [FromServices] Ecommerce.Application.Interfaces.IPaymentService paymentService) =>
+app.MapPost("/api/payment/checkout", async (ClaimsPrincipal user ,[FromBody] PaymentRequest request, [FromServices] Ecommerce.Application.Interfaces.IPaymentService paymentService) =>
 {
+     int customerId = user.GetCustomerId(); // استخراج رقم العميل من التوكن
+
     try
     {
-        var response = await paymentService.CreateCheckoutSessionAsync(request);
+        var response = await paymentService.CreateCheckoutSessionAsync(customerId , request);
         return Results.Ok(response);
     }
     catch (KeyNotFoundException ex)
     {
         return Results.NotFound(new { message = ex.Message });
     }
-}).RequireAuthorization();
+    catch (UnauthorizedAccessException ex)
+    {
+        // إرجاع رمز 403 Forbidden لأن المستخدم مسجل دخول لكنه يحاول الوصول لمورد لا يملكه
+        return Results.Json(new { message = ex.Message }, statusCode: 403);
+    }
+}).RequireAuthorization(); 
 
 // 2. بوابة استقبال إشعارات Stripe الحقيقية
 app.MapPost("/api/payment/webhook", async (
