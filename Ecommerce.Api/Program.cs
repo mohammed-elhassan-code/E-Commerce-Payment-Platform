@@ -14,6 +14,9 @@ using Ecommerce.Application.dto;
 using Ecommerce.Infrastructure.Payment;
 using System.ComponentModel.DataAnnotations;
 using Ecommerce.Domain.Entities;
+using Ecommerce.Api.Extensions;
+using System.Security.Claims;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -277,7 +280,7 @@ app.MapGet("/api/cart" , async ([FromQuery] string? couponCode , [FromServices] 
 }).RequireAuthorization();
 
 // 2. مسار إضافة منتج إلى السلة (أو زيادة الكمية)
-app.MapPost("/api/cart/items" , async ([FromBody] AddToCartRequest request ,[FromServices] CartService cartservice) =>
+app.MapPost("/api/cart/items" , async (ClaimsPrincipal user ,[FromBody] AddToCartRequest request ,[FromServices] CartService cartservice) =>
 {
      // تفعيل نظام الـ Validation اليدوي للـ Minimal APIs لمنع مدخلات خاطئة 🛑
     var validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(request);
@@ -290,11 +293,13 @@ app.MapPost("/api/cart/items" , async ([FromBody] AddToCartRequest request ,[Fro
             .GroupBy(v => v.MemberNames.FirstOrDefault() ?? string.Empty)
             .ToDictionary(g => g.Key, g => g.Select(v => v.ErrorMessage ?? "Invalid").ToArray()));
     }
-    var mockCustomerId = 1;
+
+
+    int customerId = user.GetCustomerId(); // استخراج الرقم الحقيقي من التوكن
 
     try
     {
-        var result = await cartservice.AddToCartAsync(mockCustomerId , request);
+        var result = await cartservice.AddToCartAsync(customerId , request);
        return result ? Results.Ok(new{message ="تمت اضافةالمنتج للسلة بنجاح"}) : Results.BadRequest("فشلت عملية الاضافة");
 
     }
@@ -308,7 +313,7 @@ app.MapPost("/api/cart/items" , async ([FromBody] AddToCartRequest request ,[Fro
        // الكمية المطلوبة تتجاوز المخزن المتاح حالياً
         return Results.BadRequest(new { message = ex.Message});
     }
-}).RequireAuthorization();
+}).RequireAuthorization(); // إجبار المستخدم على إرسال التوكن في الترويسة
 
 
 
@@ -384,13 +389,13 @@ app.MapPost("/api/auth/reset-password" , async ([FromBody] ResetPasswordRequest 
 });
 
 // مسار إنشاء طلب جديد وحجز المخزون وتطبيق الكوبونات عبر الـ Transaction 💳🛡️
-app.MapPost("/api/orders" , async ([FromQuery] String? couponCode , [FromServices] OrderService orderService ) =>
+app.MapPost("/api/orders" , async (ClaimsPrincipal user ,[FromQuery] String? couponCode , [FromServices] OrderService orderService ) =>
 {
-    var mockCustomerId = 1;
+    int customerId = user.GetCustomerId(); // استخراج الرقم الحقيقي من التوكن
 
     try
     {
-    var OrderResponse = await orderService.CreateOrderAsync(mockCustomerId , couponCode);
+    var OrderResponse = await orderService.CreateOrderAsync(customerId , couponCode);
     return Results.Created($"/api/orders/{OrderResponse.OrderId}" , OrderResponse);
     }
     catch (InvalidOperationException ex)
@@ -408,7 +413,7 @@ app.MapPost("/api/orders" , async ([FromQuery] String? couponCode , [FromService
         return Results.NotFound(new { message = ex.Message });
     }
 
-}).RequireAuthorization();
+}).RequireAuthorization(); // إجبار المستخدم على إرسال التوكن في الترويسة
 
 
 // =================================================================
