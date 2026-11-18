@@ -16,6 +16,7 @@ using System.ComponentModel.DataAnnotations;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Api.Extensions;
 using System.Security.Claims;
+using Ecommerce.Infrastructure.Services;
 
 
 
@@ -32,7 +33,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     builder.Services.AddScoped<IOrderRepository , OrderRepository>();
     builder.Services.AddScoped<IPaymentService , PaymentService>();
     builder.Services.AddScoped<ICategoryRepository , CategoryRepository>();
-
+    builder.Services.AddScoped<IEmailService , EmailService>();
 
 //  تسجيل خدمات طبقة الـ Application ---
     builder.Services.AddScoped<ProductService>();
@@ -327,7 +328,7 @@ app.MapPost("/api/auth/register" , async ( [FromBody] RegisterRequest request , 
     try
     {
     var result = await IdentityService.RegisterAsync(request);
-    return result ? Results.Ok("تم إنشاء الحساب بنجاح! يرجى مراجعة الـ Terminal لنسخ رابط تفعيل الحساب.") : Results.BadRequest("فشلت عملية التسجيل");
+    return result ? Results.Ok("تم إنشاء الحساب بنجاح ! لتفعيل الحساب اضغط على رابط التفعيل الذي ارسلناه الى بريدك الاكتروني. ") : Results.BadRequest("فشلت عملية التسجيل");
     }
     catch(ArgumentException ex)
     {
@@ -370,7 +371,7 @@ app.MapPost("/api/auth/refresh" , async ([FromBody] RefreshTokenRequest request 
 app.MapPost("/api/auth/forgot-password" , async ([FromBody] ForgotPasswordRequest request , [FromServices] IIdentityService IdentityService) =>
 {
     await IdentityService.ForgotPasswordAsync(request);
-    return Results.Ok(new {message = "إذا كان الحساب مسجلاً لدينا، فقد تم إرسال رابط استعادة كلمة المرور، تفقد الـ Terminal."});
+    return Results.Ok(new {message = "إذا كان الحساب مسجلاً لدينا، فقد تم إرسال رابط استعادة كلمة المرورالى بريدك الالكتروني "});
 });
 
 // مسار تعيين كلمة المرور الجديدة عبر التوكن (Reset Password) 🔐

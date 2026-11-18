@@ -8,9 +8,9 @@ C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\n
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\Ecommerce.Application.AssemblyInfoInputs.cache
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\Ecommerce.Application.AssemblyInfo.cs
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\Ecommerce.Application.csproj.CoreCompileInputs.cache
+C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\Ecommerce.Application.sourcelink.json
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\Ecommerc.C5F54E74.Up2Date
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\Ecommerce.Application.dll
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\refint\Ecommerce.Application.dll
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\Ecommerce.Application.pdb
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Application\obj\Debug\net10.0\ref\Ecommerce.Application.dll
-C:\Users\USER\Desktop\BackendTraining\solution\Ecommerce.Application\obj\Debug\net10.0\Ecommerce.Application.sourcelink.json

@@ -22,12 +22,14 @@ public class IdentityService : IIdentityService
     private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
     private readonly PasswordHasher<Customer> _passwordHasher; // أداة مايكروسوفت للتشفير الصارم 🔐
+    private readonly IEmailService _emailService;
 
-    public IdentityService(AppDbContext context , IConfiguration configuration)
+    public IdentityService(AppDbContext context , IConfiguration configuration , IEmailService emailService)
     {
         _context = context;
         _configuration = configuration;
         _passwordHasher = new PasswordHasher<Customer>();
+        _emailService = emailService;
     }
 
     // 1. تسجيل عميل جديد وتشفير كلمته برمجياً
@@ -54,9 +56,17 @@ public class IdentityService : IIdentityService
 
         if (success)
         {
-            // محاكاة إرسال بريد إلكتروني للعميل لعام 2026 تحتوي على رابط التفعيل 📧
-            string activationLink = $"http://localhost:5123/api/auth/confirm-email?token={Uri.EscapeDataString(customer.EmailConfirmationToken)}";
-            Console.WriteLine($"\n[EMAIL SIMULATOR] تم إرسال رابط التفعيل لإيميل العميل:\n--> {activationLink}\n");
+           
+           // إرسال رابط تفعيل الحساب
+           var confirmationLink = $"http://localhost:5123/api/auth/confirm-email?token={Uri.EscapeDataString(customer.EmailConfirmationToken!)}";
+
+           string emailBody = $@"
+           <h2>مرحباً بك في منصتنا، {customer.FirstName}!</h2>
+           <p>يرجى تفعيل حسابك بالضغط على الرابط التالي:</p>
+           <a href='{confirmationLink}' style='padding:10px 20px; background-color:#28a745; color:white; text-decoration:none; border-radius:5px;'>تفعيل الحساب الآن</a>";
+
+           await _emailService.SendEmailAsync(customer.Email, "تفعيل حسابك في المتجر الإلكتروني", emailBody);
+
         }
         
         return success;
@@ -178,9 +188,17 @@ public class IdentityService : IIdentityService
 
         if (success)
         {
-            // محاكاة إرسال رابط إعادة التعيين الآمن 📧
-            string resetLink = $"http://localhost:5019/api/auth/reset-password?token={Uri.EscapeDataString(customer.PasswordResetToken)}";
-            Console.WriteLine($"\n[EMAIL SIMULATOR] تم إرسال رابط إعادة تعيين كلمة المرور:\n--> {resetLink}\n");
+
+           // إرسال رابط إعادة تعيين كلمة المرور
+           var resetLink = $"http://localhost:5123/api/auth/reset-password?token={Uri.EscapeDataString(customer.PasswordResetToken!)}";
+
+           string emailBody = $@"
+           <h2>مرحبا، {customer.FirstName}!</h2>
+           <p>يرجى اعادة تعيين كلمة المرور بالضغط على الرابط التالي:</p>
+           <a href='{resetLink}' style='padding:10px 20px; background-color:#28a745; color:white; text-decoration:none; border-radius:5px;'>اعادة تعيين كلمة المرور الآن</a>";
+
+           await _emailService.SendEmailAsync(customer.Email, "اعادة تعين كلمة مرور حسابك في المتجر الإلكتروني", emailBody);
+
         }
 
         return success;
