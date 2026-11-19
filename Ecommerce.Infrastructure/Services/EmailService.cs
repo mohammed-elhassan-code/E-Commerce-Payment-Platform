@@ -16,7 +16,7 @@ public class EmailService : IEmailService
         _configuration = configuration;
     }
 
-    public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
+    public async Task SendEmailAsync(string toEmail, string subject, string htmlBody, byte[]? attachmentBytes = null, string? attachmentName = null)
     {
         var email = new MimeMessage();
 
@@ -31,12 +31,16 @@ public class EmailService : IEmailService
         email.MessageId = MimeUtils.GenerateMessageId();
         email.Date = DateTimeOffset.UtcNow;
 
-       // توفير نسخة نصية (TextBody) بجانب نسخة الـ HTML (مطلب أساسي لفلاتر البريد)
         var builder = new BodyBuilder
         {
             HtmlBody = htmlBody,
-            TextBody = "مرحباً بك. يرجى  إتمام الإجراء عبر فتح الرسالة في متصفح يدعم HTML."
         };
+
+         // إضافة ملف الـ PDF كمرفق إذا تم تمريره
+        if (attachmentBytes != null && !string.IsNullOrEmpty(attachmentName))
+        {
+        builder.Attachments.Add(attachmentName, attachmentBytes, new ContentType("application", "pdf"));
+        }
 
         email.Body = builder.ToMessageBody();
 

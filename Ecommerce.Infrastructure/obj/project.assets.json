@@ -480,6 +480,88 @@
           }
         }
       },
+      "QuestPDF/2026.9.2": {
+        "type": "package",
+        "compile": {
+          "lib/net10.0/QuestPDF.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0/QuestPDF.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/QuestPDF.targets": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-arm64/native/libquestpdf_qpdf.so": {
+            "assetType": "native",
+            "rid": "linux-arm64"
+          },
+          "runtimes/linux-arm64/native/libquestpdf_skia.so": {
+            "assetType": "native",
+            "rid": "linux-arm64"
+          },
+          "runtimes/linux-musl-x64/native/libquestpdf_qpdf.so": {
+            "assetType": "native",
+            "rid": "linux-musl-x64"
+          },
+          "runtimes/linux-musl-x64/native/libquestpdf_skia.so": {
+            "assetType": "native",
+            "rid": "linux-musl-x64"
+          },
+          "runtimes/linux-x64/native/libquestpdf_qpdf.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/linux-x64/native/libquestpdf_skia.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx-arm64/native/libquestpdf_qpdf.dylib": {
+            "assetType": "native",
+            "rid": "osx-arm64"
+          },
+          "runtimes/osx-arm64/native/libquestpdf_skia.dylib": {
+            "assetType": "native",
+            "rid": "osx-arm64"
+          },
+          "runtimes/osx-x64/native/libquestpdf_qpdf.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/osx-x64/native/libquestpdf_skia.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/win-arm64/native/questpdf_qpdf.dll": {
+            "assetType": "native",
+            "rid": "win-arm64"
+          },
+          "runtimes/win-arm64/native/questpdf_skia.dll": {
+            "assetType": "native",
+            "rid": "win-arm64"
+          },
+          "runtimes/win-x64/native/questpdf_qpdf.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/questpdf_skia.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/questpdf_qpdf.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/questpdf_skia.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
+        }
+      },
       "StackExchange.Redis/2.7.27": {
         "type": "package",
         "dependencies": {
@@ -1262,6 +1344,73 @@
         "pipelines.sockets.unofficial.nuspec"
       ]
     },
+    "QuestPDF/2026.9.2": {
+      "sha512": "Nc7nvV/CmL/lonuw1mTQbiETfU7EZoM2kZ9YRgdbC5VivVjxsMHPJ18g4t5FMx/jUGh6XpJXFfW1rFWvAYOeTg==",
+      "type": "package",
+      "path": "questpdf/2026.9.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Contributors.md",
+        "Description.md",
+        "Documentation.xml",
+        "ExternalDependencyLicenses/emsdk.txt",
+        "ExternalDependencyLicenses/expat.txt",
+        "ExternalDependencyLicenses/freetype.txt",
+        "ExternalDependencyLicenses/harfbuzz.txt",
+        "ExternalDependencyLicenses/lato.txt",
+        "ExternalDependencyLicenses/libgrapheme.txt",
+        "ExternalDependencyLicenses/libjpeg-turbo.txt",
+        "ExternalDependencyLicenses/libpng.txt",
+        "ExternalDependencyLicenses/libwebp.txt",
+        "ExternalDependencyLicenses/ninja-build.txt",
+        "ExternalDependencyLicenses/qpdf.txt",
+        "ExternalDependencyLicenses/readme.txt",
+        "ExternalDependencyLicenses/skia.txt",
+        "ExternalDependencyLicenses/wuffs.txt",
+        "ExternalDependencyLicenses/zlib.txt",
+        "LICENSE.md",
+        "LatinWords.txt",
+        "Logo.png",
+        "MimeTypes.csv",
+        "README.md",
+        "ReleaseNotes.txt",
+        "build/QuestPDF.targets",
+        "build/net4/QuestPDF.targets",
+        "buildTransitive/QuestPDF.targets",
+        "buildTransitive/net4/QuestPDF.targets",
+        "lib/net10.0/QuestPDF.dll",
+        "lib/net10.0/QuestPDF.xml",
+        "lib/net5.0/QuestPDF.dll",
+        "lib/net5.0/QuestPDF.xml",
+        "lib/net6.0/QuestPDF.dll",
+        "lib/net6.0/QuestPDF.xml",
+        "lib/net8.0/QuestPDF.dll",
+        "lib/net8.0/QuestPDF.xml",
+        "lib/netstandard2.0/QuestPDF.dll",
+        "lib/netstandard2.0/QuestPDF.xml",
+        "questpdf.2026.9.2.nupkg.sha512",
+        "questpdf.nuspec",
+        "questpdf_fonts_lato.br",
+        "questpdf_fonts_lato.gz",
+        "runtimes/linux-arm64/native/libquestpdf_qpdf.so",
+        "runtimes/linux-arm64/native/libquestpdf_skia.so",
+        "runtimes/linux-musl-x64/native/libquestpdf_qpdf.so",
+        "runtimes/linux-musl-x64/native/libquestpdf_skia.so",
+        "runtimes/linux-x64/native/libquestpdf_qpdf.so",
+        "runtimes/linux-x64/native/libquestpdf_skia.so",
+        "runtimes/osx-arm64/native/libquestpdf_qpdf.dylib",
+        "runtimes/osx-arm64/native/libquestpdf_skia.dylib",
+        "runtimes/osx-x64/native/libquestpdf_qpdf.dylib",
+        "runtimes/osx-x64/native/libquestpdf_skia.dylib",
+        "runtimes/win-arm64/native/questpdf_qpdf.dll",
+        "runtimes/win-arm64/native/questpdf_skia.dll",
+        "runtimes/win-x64/native/questpdf_qpdf.dll",
+        "runtimes/win-x64/native/questpdf_skia.dll",
+        "runtimes/win-x86/native/questpdf_qpdf.dll",
+        "runtimes/win-x86/native/questpdf_skia.dll"
+      ]
+    },
     "StackExchange.Redis/2.7.27": {
       "sha512": "Uqc2OQHglqj9/FfGQ6RkKFkZfHySfZlfmbCl+hc+u2I/IqunfelQ7QJi7ZhvAJxUtu80pildVX6NPLdDaUffOw==",
       "type": "package",
@@ -1495,6 +1644,7 @@
       "MailKit >= 5.0.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 10.0.14",
       "Microsoft.Extensions.Caching.StackExchangeRedis >= 10.0.14",
+      "QuestPDF >= 2026.9.2",
       "Stripe.net >= 53.1.0"
     ]
   },
@@ -1565,6 +1715,10 @@
           "Microsoft.Extensions.Caching.StackExchangeRedis": {
             "target": "Package",
             "version": "[10.0.14, )"
+          },
+          "QuestPDF": {
+            "target": "Package",
+            "version": "[2026.9.2, )"
           },
           "Stripe.net": {
             "target": "Package",

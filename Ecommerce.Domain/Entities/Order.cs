@@ -15,7 +15,7 @@ public class Order
 {
     public int Id {get; set;}
     public int CustomerId {get; set;}
-    public Customer customer {get; set;} = null!;
+    public Customer Customer {get; set;} = null!;
     public decimal TotalAmount {get; set;} // إجمالي المبلغ المطلوب دفعه
     public decimal TaxAmount { get; set; } // تسجيل قيمة الضريبة المحسوبة نقدًا
     public OrderStatus Status {get; set;} = OrderStatus.Pending; // حالة الطلب الابتدائية

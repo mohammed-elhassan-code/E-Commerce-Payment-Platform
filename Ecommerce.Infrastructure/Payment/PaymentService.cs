@@ -13,11 +13,14 @@ public class PaymentService : IPaymentService
 {
     private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
-
-    public PaymentService(AppDbContext context, IConfiguration configuration)
+    private readonly IInvoiceService _invoiceService;
+    private readonly IEmailService _emailService;
+    public PaymentService(AppDbContext context, IConfiguration configuration , IInvoiceService invoiceService, IEmailService emailService)
     {
         _context = context;
         _configuration = configuration;
+        _invoiceService = invoiceService;
+        _emailService = emailService;
 
         // تهيئة المفتاح السري لبوابة Stripe
         StripeConfiguration.ApiKey = _configuration["StripeSettings:SecretKey"];
@@ -96,10 +99,12 @@ public class PaymentService : IPaymentService
         if (!int.TryParse(session.ClientReferenceId, out int orderId))
             return false;
 
-        // جلب الطلب مع عناصره من قاعدة البيانات
-        var order = await _context.Orders
-            .Include(o => o.OrderItems)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
+        
+         var order = await _context.Orders
+        .Include(o => o.Customer)
+        .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product)
+        .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order is null)
             return false;
@@ -118,7 +123,19 @@ public class PaymentService : IPaymentService
             order.PaymentTransactionId = session.PaymentIntentId ?? session.Id;
 
             _context.Orders.Update(order);
-            return await _context.SaveChangesAsync() > 0;
+            bool saved = await _context.SaveChangesAsync() > 0;
+
+             // توليد وإرسال فاتورة PDF إلى إيميل العميل بعد تأكيد الدفع
+            if (saved && order.Customer != null && !string.IsNullOrEmpty(order.Customer.Email))
+            {
+              var pdfBytes = _invoiceService.GenerateOrderInvoicePdf(order);
+              string subject = $"فاتورة طلبك رقم #{order.Id} - تم الدفع بنجاح";
+              string body = $"<h3>شكراً لتسوقك معنا يا {order.Customer.FirstName}!</h3><p>تم تأكيد عملية الدفع بنجاح. تجد فاتورتك الضريبية مفصلة في المرفقات.</p>";
+
+              await _emailService.SendEmailAsync(order.Customer.Email, subject, body, pdfBytes, $"Invoice_Order_{order.Id}.pdf");
+            }
+
+         return saved;
         }
 
         // -------------------------------------------------------------

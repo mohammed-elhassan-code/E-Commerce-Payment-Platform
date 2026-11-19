@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "5af0j1jy+8c=",
+  "dgSpecHash": "yYXLhH5pYYU=",
   "success": true,
   "projectFilePath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Infrastructure\\Ecommerce.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -30,6 +30,7 @@
     "C:\\Users\\USER\\.nuget\\packages\\mimekit.core\\5.0.0\\mimekit.core.5.0.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\questpdf\\2026.9.2\\questpdf.2026.9.2.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\stackexchange.redis\\2.7.27\\stackexchange.redis.2.7.27.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\stripe.net\\53.1.0\\stripe.net.53.1.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\system.clientmodel\\1.8.0\\system.clientmodel.1.8.0.nupkg.sha512",

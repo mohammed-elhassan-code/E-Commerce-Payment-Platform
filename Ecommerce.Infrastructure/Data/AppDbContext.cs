@@ -84,7 +84,7 @@ public class AppDbContext : DbContext
         .HasPrecision(18, 2);
 
         modelBuilder.Entity<Order>()
-        .HasOne(o => o.customer)
+        .HasOne(o => o.Customer)
         .WithMany()
         .HasForeignKey( o => o.CustomerId)
         .OnDelete(DeleteBehavior.Restrict);  // حماية العميل من الحذف العشوائي إذا كان له طلبات

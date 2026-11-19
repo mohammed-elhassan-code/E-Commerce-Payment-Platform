@@ -34,6 +34,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     builder.Services.AddScoped<IPaymentService , PaymentService>();
     builder.Services.AddScoped<ICategoryRepository , CategoryRepository>();
     builder.Services.AddScoped<IEmailService , EmailService>();
+    builder.Services.AddScoped<IInvoiceService , InvoiceService>();
 
 //  تسجيل خدمات طبقة الـ Application ---
     builder.Services.AddScoped<ProductService>();
