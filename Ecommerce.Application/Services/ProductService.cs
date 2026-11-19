@@ -1,6 +1,7 @@
 using Ecommerce.Application.DTOs;
 using Ecommerce.Application.Interfaces;
 using Ecommerce.Domain.Entities;
+using Microsoft.VisualBasic;
 
 namespace Ecommerce.Application.Services;
 
@@ -73,4 +74,27 @@ public class ProductService
          
          return true;
     }
+
+    public async Task<int> AddStockAsync(int productid , int quantityToAdd)
+    {
+        if(quantityToAdd <=0)
+          throw new ArgumentException("يجب ان تكون الكمية المضافة اكبر من الصفر");
+
+        var product = await _productRepository.GetByIdAsync(productid);
+
+        if(product is null)
+          throw new KeyNotFoundException("المنتج المحدد غير موجود في النظام");
+        
+        // إضافة الكمية الجديدة إلى المخزون الحالي
+        product.Stock+=quantityToAdd;
+        
+        _productRepository.Update(product);
+        await _productRepository.SaveChangesAsync();
+
+        // إرجاع إجمالي المخزون الجديد بعد التحديث
+        return product.Stock;
+
+    }
+
+    
 }

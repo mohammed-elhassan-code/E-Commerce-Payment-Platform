@@ -157,6 +157,29 @@ app.MapGet("/api/products", async (ProductService service)=>
     return Results.Created($"/api/products/{product.Id}", product); 
  }).RequireAuthorization(policy => policy.RequireRole("Admin"));
 
+ // مسار إضافة كمية للمخزون - محمي بصلاحية Admin حصرياً
+ app.MapPatch("/api/products/{id}/stock" , async (int id , [FromBody] AddStockERquest request , [FromServices] ProductService service) =>
+ {
+     try
+     {
+         var updatedStock = await service.AddStockAsync(id , request.QuantityToAdd);
+         return Results.Ok(new
+         {
+             message = "تم تحديث الكمية بنجاح",
+             productId = id,
+             newStock = updatedStock
+         });
+     }
+     catch(KeyNotFoundException ex)
+     {
+         return Results.NotFound(new {message = ex.Message});
+     }
+     catch(ArgumentException ex)
+     {
+          return Results.BadRequest(new { message = ex.Message });
+     }
+ }).RequireAuthorization(polic => polic.RequireRole("Admin"));
+
  // ----تعديل بيانات منتج
   app.MapPut("/api/products/{id}" , async (int id , UpdateProductRequest request , ProductService service) =>
  {
