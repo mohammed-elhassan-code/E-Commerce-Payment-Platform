@@ -23,15 +23,21 @@ The solution follows strict **Clean Architecture** principles to ensure separati
 * **Cryptographic Password Hashing**: Uses ASP.NET Core's `PasswordHasher` (PBKDF2 with random salting).
 * **Account Verification & Recovery**: Email confirmation workflows and time-limited password reset tokens.
 * **Role-Based Access Control (RBAC)**: Strict endpoint protection separating `Customer` and `Admin` privileges.
+* **Real SMTP Email Delivery (MailKit)**: Integrated MailKit and MimeKit for real-time transactional emails (account activation links, password recovery, and order invoices).
+* **Ownership & IDOR Protection**: Extracts authenticated user IDs directly from JWT claims (ClaimTypes.NameIdentifier) and enforces resource ownership checks across carts, orders, and payment sessions.
+* **Secure Admin Registration**: Supports programmatic Admin role assignment during registration via a protected server-side secret key
 
 ### 🛍️ Smart Cart & Inventory Protection
 * **Server-Side Price Computation**: Prevents client-side price tampering by fetching authentic product prices directly from the database.
 * **Inventory Guard**: Prevents overselling by validating real-time warehouse stock levels before adding items or finalizing orders.
 * **Temporal Coupon Engine & Caching**: Validates active coupons and expiration dates, backed by **`IDistributedCache`** (Redis/In-Memory) for sub-millisecond response times under high load.
+* **Admin Inventory Restocking**: Added a role-protected PATCH /api/products/{id}/stock endpoint allowing administrators to replenish product stock levels safely
 
 ### 💳 Transactional Orders & Fintech Webhooks
 * **ACID Database Transactions**: Order creation, stock deduction, tax calculation (15% VAT), and cart clearing are wrapped in explicit database transactions with automatic rollback on failure.
-* **Payment Gateway Sandbox & Webhooks**: Generates secure checkout sessions and processes asynchronous payment notifications.
+* **Live Stripe Checkout & Webhooks**: Integrated the official Stripe.net SDK to generate real checkout sessions and verify cryptographic Stripe-Signature headers (EventUtility.ConstructEvent).
+* **Automated Expired Session Recovery**: Listens to checkout.session.expired webhook events to automatically cancel unpaid sessions and restore reserved items back to warehouse stock.
+* **Automated PDF Invoicing (QuestPDF)**: Generates itemized tax invoices in-memory upon payment confirmation and sends them automatically as PDF email attachments.
 * **Webhook Signature & Idempotency**: Verifies cryptographic signatures (`401 Unauthorized` on tampering) and ensures duplicate webhook events are safely ignored without double-processing orders or stock.
 
 ### 🛠️ DevOps, Resilience & Quality
@@ -50,7 +56,7 @@ The solution follows strict **Clean Architecture** principles to ensure separati
 * **Documentation**: OpenAPI & Scalar UI (`/scalar`)
 * **Testing**: xUnit & Moq
 * **DevOps**: Docker, Docker Compose, GitHub Actions
-
+* **Payments, Email & PDF**: Stripe.net SDK, MailKit, QuestPDF 
 ---
 
 ## 🚀 Getting Started
