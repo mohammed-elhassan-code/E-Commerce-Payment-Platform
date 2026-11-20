@@ -38,11 +38,25 @@ public class IdentityService : IIdentityService
         var exsist = await _context.Customers.AnyAsync( c => c.Email.ToLower() == request.Email.ToLower());
         if(exsist) throw new ArgumentException ("البريد الالكتروني مسجل مسبقا في النظام");
 
+        string assignedRole ="Customer";
+
+        if (!string.IsNullOrWhiteSpace(request.AdminSecertKey))
+        {
+           var expectedSecret = _configuration["AdminSettings:RegistrationSecret"];
+
+            if(string.IsNullOrEmpty(expectedSecret) || request.AdminSecertKey != expectedSecret )
+            throw new UnauthorizedAccessException("مفتاح تسجيل الإدارة السري غير صحيح!");
+
+            assignedRole = "Admin";
+        }
+        
         var customer =new Customer
         {
           FirstName = request.FirstName,
           LastName = request.LastName,
-          Email = request.Email.ToLower()
+          Email = request.Email.ToLower(),
+          Role = assignedRole 
+          
         };
            
         // التشفير الآمن باتجاه واحد   

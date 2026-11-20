@@ -9,7 +9,7 @@ public class Customer
     public string LastName {get; set;} = string.Empty;
     public string Email {get; set;} = string.Empty;
     public string PasswordHash {get; set;} = string.Empty; // لتخزين كلمة المرور مشفرة آمنة 🔐
-    public string Role {get; set;} = "customer";  // تحديد الدور (Admin أو Customer)
+    public string Role {get; set;} = string.Empty;  // تحديد الدور (Admin أو Customer)
     public DateTime CreatedAt {get; set;} = DateTime.UtcNow;
 
     // --- حقول أمان تفعيل الحساب عبر الإيميل 📧 ---

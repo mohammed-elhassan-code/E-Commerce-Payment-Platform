@@ -358,6 +358,10 @@ app.MapPost("/api/auth/register" , async ( [FromBody] RegisterRequest request , 
     {
         return Results.BadRequest( new { Message = ex.Message});
     }
+    catch(UnauthorizedAccessException ex)
+    {
+        return Results.Json(new {message = ex.Message} , statusCode:401);
+    }
 
 });
 

@@ -14,4 +14,7 @@ public class RegisterRequest
      [Required(ErrorMessage = "كلمة المرور مطلوية")]
      [StringLength(100 , MinimumLength = 6 , ErrorMessage = "يجب أن تكون كلمة المرور 6 أحرف على الأقل")]
     public string Password {get; set;} =string.Empty;
+    
+    // حقل اختياري: يُترك فارغاً للعملاء، ويُملأ بالمفتاح السري لإنشاء حساب مدير
+    public string? AdminSecertKey {get; set;}
 }
