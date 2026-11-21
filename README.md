@@ -42,8 +42,10 @@ The solution follows strict **Clean Architecture** principles to ensure separati
 
 ### 🛠️ DevOps, Resilience & Quality
 * **Global Exception Handling**: Centralized `IExceptionHandler` returning standardized RFC-compliant `ProblemDetails` JSON responses without leaking internal stack traces.
+* **Structured Logging (Serilog)**: Configured `Serilog` with daily rolling file sinks and structured console logging across core services (`OrderService`, `PaymentService`) for real-time observability and auditing.
 * **Containerization**: Full **Docker** and **Docker Compose** setup orchestrating the .NET 10 API, SQL Server, and Redis.
 * **CI/CD Automation**: Automated build and unit test verification pipeline powered by **GitHub Actions**.
+
 
 ---
 
@@ -57,6 +59,8 @@ The solution follows strict **Clean Architecture** principles to ensure separati
 * **Testing**: xUnit & Moq
 * **DevOps**: Docker, Docker Compose, GitHub Actions
 * **Payments, Email & PDF**: Stripe.net SDK, MailKit, QuestPDF 
+* **Logging & Observability**: Serilog (`Serilog.AspNetCore`, Console & Rolling File Sinks)
+
 ---
 
 ## 🚀 Getting Started

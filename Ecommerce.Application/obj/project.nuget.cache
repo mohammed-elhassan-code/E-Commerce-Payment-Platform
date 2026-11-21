@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "YSxdpQbzVr0=",
+  "dgSpecHash": "R0THywlCznI=",
   "success": true,
   "projectFilePath": "C:\\Users\\USER\\Desktop\\BackendTraining\\Solution\\Ecommerce.Application\\Ecommerce.Application.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\11.0.0\\microsoft.extensions.dependencyinjection.abstractions.11.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\11.0.0\\microsoft.extensions.logging.abstractions.11.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\system.diagnostics.diagnosticsource\\11.0.0\\system.diagnostics.diagnosticsource.11.0.0.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -49,8 +49,9 @@ public class CartService
             // درع فحص الكوبونات: التحقق من الفعالية وتاريخ الصلاحية لعام 2026 ⏳
             if( coupon != null && coupon.IsActive && coupon.ExpiryDate >= DateTime.UtcNow)
             {
-                decimal discountAmount = response.GrandTotal * (coupon.DiscountPercentage/100);
-                response.GrandTotal -= discountAmount ; // تطبيق الخصم بأمان
+                response.Discount =  response.GrandTotal * (coupon.DiscountPercentage/100);
+                response.GrandTotal -= response.Discount ; // تطبيق الخصم بأمان
+                 
             }
             else
             {   
@@ -60,9 +61,7 @@ public class CartService
 
             
         }
-        
          return response;   
-        
     }
 
     // 2. إضافة منتج للسلة أو تحديث الكمية إذا كان موجودًا مسبقًا
@@ -105,8 +104,6 @@ public class CartService
         }
 
         return await _cartrepository.SaveChangesAsync();
-
     }
 
-           
 }

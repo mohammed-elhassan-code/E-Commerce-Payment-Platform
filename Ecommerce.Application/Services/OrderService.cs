@@ -1,6 +1,8 @@
 using Ecommerce.Application.DTOs;
 using Ecommerce.Application.Interfaces;
 using Ecommerce.Domain.Entities;
+using Microsoft.Extensions.Logging;
+
 
 namespace Ecommerce.Application.Services;
 
@@ -10,22 +12,28 @@ public class OrderService
     private readonly ICartRepository _cartRepository;
     private readonly IProductRepository _productRepository;
     private readonly ICouponRepository _couponRepository; 
+    private readonly ILogger<OrderService> _logger;
 
     public OrderService(
         IOrderRepository orderRepository,
         ICartRepository cartRepository,
         IProductRepository productRepository,
-        ICouponRepository couponRepository)
+        ICouponRepository couponRepository,
+        ILogger<OrderService> logger)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
         _productRepository = productRepository;
         _couponRepository = couponRepository;
+        _logger = logger;
     }
 
     // إنشاء الطلب وحجز المخزون وتطبيق الكوبونات بأمان عبر الـ Transaction 💳🔥
     public async Task<OrderResponse> CreateOrderAsync(int customerId, string? couponCode = null)
     {
+        // تسجيل معلومة بدء انشاء الطلب
+        _logger.LogInformation("Initiating order creation for Customer #{CustomerId} with Coupon: {CouponCode}", customerId, couponCode ?? "None");
+
         // 1. جلب عناصر السلة للتأكد من وجود منتجات للشراء
         var cartItems = await _cartRepository.GetByCustomerIdAsync(customerId);
         if (!cartItems.Any())
@@ -58,6 +66,9 @@ public class OrderService
                 // درع المخزون: منع بيع كميات غير متوفرة تحت الضغط العالي 🛑
                 if (product.Stock < cartItem.Quantity)
                 {
+                    // يقوم ال logger بتسجيل معلومة فشل انشاء الطلب بسبب نقص كمية المخزون
+                    _logger.LogWarning("Order creation failed for Customer #{CustomerId}: Insufficient stock for Product #{ProductId}", customerId, cartItem.ProductId);
+
                     throw new InvalidOperationException($"عذرًا، فشل إتمام الطلب! المنتج '{product.Name}' نفد أو كميته أقل من المطلوبة. المخزون الحالي: {product.Stock}");
                 }
 
@@ -119,6 +130,9 @@ public class OrderService
 
             // 6. تثبيت ونجاح المعاملة ماليًا وقبول التغييرات في السيرفر بشكل نهائي 🎯
             await transaction.CommitAsync();
+            
+            // نجعل ال logger  يسجيل معلومة نجاح انشاء الطلب 
+            _logger.LogInformation("Order #{OrderId} created successfully for Customer #{CustomerId}. Total Amount: {TotalAmount:C}", order.Id, customerId, order.TotalAmount);
 
             // صياغة الرد النهائي المنسق
             return new OrderResponse
@@ -149,12 +163,22 @@ public class OrderService
     {
     var order = await _orderRepository.GetByIdAsync(orderId);
     if (order is null)
+    {
+      // تسجيل معلومة ان الطلب غير موجود في قاعدة البيانات 
+      _logger.LogWarning("Order #{OrderId} not found when requested by Customer #{CustomerId}", orderId, customerId);
+
         throw new KeyNotFoundException("الطلب المحدد غير موجود!");
+    }
 
     // درع التحقق من الملكية: منع العميل من الاطلاع على فواتير عملاء آخرين
     if (order.CustomerId != customerId)
+    {
+       // تسجيل معلومة ان عميل يحاول الاطلاع على طلب عميل اخر
+        _logger.LogWarning("Unauthorized access attempt: Customer #{CustomerId} tried to view Order #{OrderId} belonging to Customer #{OwnerId}", customerId, orderId, order.CustomerId);
+        
         throw new UnauthorizedAccessException("غير مصرح لك بعرض تفاصيل هذا الطلب!");
 
+    }
     return new OrderResponse
     {
         OrderId = order.Id,

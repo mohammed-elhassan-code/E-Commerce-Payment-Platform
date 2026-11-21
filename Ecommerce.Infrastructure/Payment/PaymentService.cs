@@ -4,6 +4,7 @@ using Ecommerce.Domain.Entities;
 using Ecommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Stripe;
 using Stripe.Checkout;
 
@@ -15,12 +16,14 @@ public class PaymentService : IPaymentService
     private readonly IConfiguration _configuration;
     private readonly IInvoiceService _invoiceService;
     private readonly IEmailService _emailService;
-    public PaymentService(AppDbContext context, IConfiguration configuration , IInvoiceService invoiceService, IEmailService emailService)
+    private readonly ILogger<PaymentService> _logger;
+    public PaymentService(AppDbContext context, IConfiguration configuration , IInvoiceService invoiceService, IEmailService emailService , ILogger<PaymentService> logger)
     {
         _context = context;
         _configuration = configuration;
         _invoiceService = invoiceService;
         _emailService = emailService;
+        _logger = logger;
 
         // تهيئة المفتاح السري لبوابة Stripe
         StripeConfiguration.ApiKey = _configuration["StripeSettings:SecretKey"];
@@ -134,6 +137,9 @@ public class PaymentService : IPaymentService
 
               await _emailService.SendEmailAsync(order.Customer.Email, subject, body, pdfBytes, $"Invoice_Order_{order.Id}.pdf");
             }
+             
+             // يقوم ال logger بتسجيل معلومة نجاح عملية الدفع
+            _logger.LogInformation("Payment confirmed for Order #{OrderId}. Transaction ID: {TransactionId}", order.Id, order.PaymentTransactionId);
 
          return saved;
         }
@@ -163,6 +169,9 @@ public class PaymentService : IPaymentService
 
             return await _context.SaveChangesAsync() > 0;
         }
+        
+        //يقوم ال logger بتسجيل معلومة انتهاء الجلسة
+        _logger.LogWarning("Checkout session expired for Order #{OrderId}. Stock has been restored.", order.Id);
 
         return true;
     }

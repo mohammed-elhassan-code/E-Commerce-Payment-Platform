@@ -17,10 +17,26 @@ using Ecommerce.Domain.Entities;
 using Ecommerce.Api.Extensions;
 using System.Security.Claims;
 using Ecommerce.Infrastructure.Services;
+using Serilog;
 
 
+// تهيئة Serilog فور بدء التطبيق
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
+try
+{
+    
+Log.Information("Starting E-Commerce & Payment Platform API...");
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ربط Serilog مع إعدادات appsettings.json
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services));
+
 
 //   تسجيل خدمات البنية التحتية (Infrastructure Services) ---
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -63,6 +79,7 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
     };
+
 });
 
 builder.Services.AddAuthorization();
@@ -107,6 +124,10 @@ app.UseCors("AllowStoreFrontend"); // تفعيل درع حماية الطلبا�
 
 app.UseAuthentication(); // التعرف على الهوية 👤
 app.UseAuthorization();  // التحقق من الصلاحيات 🔐
+
+// يسجل كل طلب وارد (Method, Path, Status Code, Response Time) في سطر واحد نظيف
+app.UseSerilogRequestLogging();
+
 
 // مسارات المنتجات (Products Endpoints)
 
@@ -338,6 +359,10 @@ app.MapPost("/api/cart/items" , async (ClaimsPrincipal user ,[FromBody] AddToCar
        // الكمية المطلوبة تتجاوز المخزن المتاح حالياً
         return Results.BadRequest(new { message = ex.Message});
     }
+    catch(UnauthorizedAccessException ex)
+    {
+        return Results.Json(new {message = ex.Message}, statusCode: 401);
+    }
 }).RequireAuthorization(); // إجبار المستخدم على إرسال التوكن في الترويسة
 
 
@@ -441,6 +466,10 @@ app.MapPost("/api/orders" , async (ClaimsPrincipal user ,[FromQuery] String? cou
     {
         return Results.NotFound(new { message = ex.Message });
     }
+    catch(UnauthorizedAccessException ex)
+    {
+        return Results.Json(new { message = ex.Message}, statusCode: 401);
+    }
 
 }).RequireAuthorization(); // إجبار المستخدم على إرسال التوكن في الترويسة
 
@@ -531,3 +560,14 @@ app.MapGet("/payment-cancel", (int orderId) => Results.Ok($"تم إلغاء عم
 
 
 app.Run();
+
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly!");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
+

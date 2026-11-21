@@ -10,3 +10,4 @@ C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.0\refint\Ecommerce.Domain.dll
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.0\Ecommerce.Domain.pdb
 C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.0\ref\Ecommerce.Domain.dll
+C:\Users\USER\Desktop\BackendTraining\Solution\Ecommerce.Domain\obj\Debug\net10.0\Ecommerc.9B51F420.Up2Date
