@@ -50,7 +50,7 @@ public class CartService
             if( coupon != null && coupon.IsActive && coupon.ExpiryDate >= DateTime.UtcNow)
             {
                 response.Discount =  response.GrandTotal * (coupon.DiscountPercentage/100);
-                response.GrandTotal -= response.Discount ; // تطبيق الخصم بأمان
+                response.GrandTotal -= response.Discount  ; // تطبيق الخصم بأمان
                  
             }
             else

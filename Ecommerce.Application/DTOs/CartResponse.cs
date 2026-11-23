@@ -12,6 +12,6 @@ public class CartItemDto
 public class CartResponse
 {
     public List<CartItemDto> items {get; set;}= new();
-    public decimal? Discount {get; set;}
+    public decimal Discount {get; set;} = 0;
     public decimal GrandTotal {get; set;} // إجمالي السلة بالكامل بعد الحساب على السيرفر
 }

@@ -27,11 +27,13 @@ The solution follows strict **Clean Architecture** principles to ensure separati
 * **Ownership & IDOR Protection**: Extracts authenticated user IDs directly from JWT claims (ClaimTypes.NameIdentifier) and enforces resource ownership checks across carts, orders, and payment sessions.
 * **Secure Admin Registration**: Supports programmatic Admin role assignment during registration via a protected server-side secret key
 
-### 🛍️ Smart Cart & Inventory Protection
+### 🛍️ Product Catalog, Smart Cart & Inventory
 * **Server-Side Price Computation**: Prevents client-side price tampering by fetching authentic product prices directly from the database.
 * **Inventory Guard**: Prevents overselling by validating real-time warehouse stock levels before adding items or finalizing orders.
 * **Temporal Coupon Engine & Caching**: Validates active coupons and expiration dates, backed by **`IDistributedCache`** (Redis/In-Memory) for sub-millisecond response times under high load.
-* **Admin Inventory Restocking**: Added a role-protected PATCH /api/products/{id}/stock endpoint allowing administrators to replenish product stock levels safely
+* **Admin Inventory Restocking**: Added a role-protected PATCH /api/products/{id}/stock endpoint allowing administrators to replenish product stock levels safely.
+* **Dynamic Catalog Querying (Search, Filter, Sort & Pagination)**: Implemented database-level `IQueryable` filtering (`AsNoTracking`), keyword search, price/category filtering, dynamic sorting, and paginated metadata responses (`PagedResult<T>`).
+
 
 ### 💳 Transactional Orders & Fintech Webhooks
 * **ACID Database Transactions**: Order creation, stock deduction, tax calculation (15% VAT), and cart clearing are wrapped in explicit database transactions with automatic rollback on failure.

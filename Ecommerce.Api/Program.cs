@@ -18,6 +18,7 @@ using Ecommerce.Api.Extensions;
 using System.Security.Claims;
 using Ecommerce.Infrastructure.Services;
 using Serilog;
+using ecommer.Application.DTOs;
 
 
 // تهيئة Serilog فور بدء التطبيق
@@ -131,12 +132,12 @@ app.UseSerilogRequestLogging();
 
 // مسارات المنتجات (Products Endpoints)
 
-// ----جلب جميع المنتجات
-app.MapGet("/api/products", async (ProductService service)=>
+
+//---- جلب جميع المنتجات او وفق شروط فلترة معينة
+app.MapGet("/api/products" , async ([AsParameters] ProductQueryParameters queryParameters  , [FromServices] ProductService service) =>
 {
-    var products = await service.GetAllAsync();
-    
-    return products is null? Results.NotFound() : Results.Ok(products);
+    var result = await service.GetProductsAsync(queryParameters);
+    return result is null? Results.NotFound() : Results.Ok(result);
     
 });
 

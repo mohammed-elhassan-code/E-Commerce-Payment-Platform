@@ -1,3 +1,4 @@
+using ecommer.Application.DTOs;
 using Ecommerce.Application.DTOs;
 using Ecommerce.Application.Interfaces;
 using Ecommerce.Domain.Entities;
@@ -28,11 +29,7 @@ public class ProductService
         };
 
     }
-    public async Task<List<ProductResponse>> GetAllAsync()
-    {
-        var products = await _productRepository.GetAllAsync();
-        return products.Select(p => new ProductResponse { Id = p.Id, Name = p.Name, Price = p.Price }).ToList();
-    }
+    
 
     public async Task<ProductResponse> CreateAsync(CreateProductRequest request)
     {
@@ -95,6 +92,29 @@ public class ProductService
         return product.Stock;
 
     }
+
+    public async Task<PagedResult<ProductResponse>> GetProductsAsync(ProductQueryParameters parameters)
+{
+    var (products, totalCount) = await _productRepository.GetFilteredAsync(parameters);
+
+    var productDtos = products.Select(p => new ProductResponse
+    {
+        Id = p.Id,
+        Name = p.Name,
+        Price = p.Price,
+        Stock = p.Stock,
+        CategoryName = p.Category?.Name ?? "Uncategorized"
+    });
+
+    return new PagedResult<ProductResponse>
+    {
+        Items = productDtos,
+        TotalCount = totalCount,
+        PageNumber = parameters.PageNumber,
+        PageSize = parameters.PageSize
+    };
+}
+
 
     
 }
