@@ -35,6 +35,7 @@ public class IdentityService : IIdentityService
     // 1. تسجيل عميل جديد وتشفير كلمته برمجياً
     public async Task<bool> RegisterAsync(RegisterRequest request)
     {
+
         var exsist = await _context.Customers.AnyAsync( c => c.Email.ToLower() == request.Email.ToLower());
         if(exsist) throw new ArgumentException ("البريد الالكتروني مسجل مسبقا في النظام");
 
@@ -68,11 +69,14 @@ public class IdentityService : IIdentityService
         _context.Customers.Add(customer);
         var success =  await _context.SaveChangesAsync() > 0;
 
+
+        var baseUrl = _configuration["AppSettings:BaseUrl"] ?? "http://localhost:5123";
+
         if (success)
         {
            
            // إرسال رابط تفعيل الحساب
-           var confirmationLink = $"http://localhost:5123/api/auth/confirm-email?token={Uri.EscapeDataString(customer.EmailConfirmationToken!)}";
+           var confirmationLink = $"{baseUrl}/api/auth/confirm-email?token={Uri.EscapeDataString(customer.EmailConfirmationToken!)}";
 
            string emailBody = $@"
            <h2>مرحباً بك في منصتنا، {customer.FirstName}!</h2>
@@ -200,11 +204,15 @@ public class IdentityService : IIdentityService
         _context.Customers.Update(customer);
         var success = await _context.SaveChangesAsync() > 0;
 
+
+        var baseUrl = _configuration["AppSettings:BaseUrl"] ?? "http://localhost:5123";
+
+
         if (success)
         {
 
            // إرسال رابط إعادة تعيين كلمة المرور
-           var resetLink = $"http://localhost:5123/api/auth/reset-password?token={Uri.EscapeDataString(customer.PasswordResetToken!)}";
+           var resetLink = $"{baseUrl}/api/auth/reset-password?token={Uri.EscapeDataString(customer.PasswordResetToken!)}";
 
            string emailBody = $@"
            <h2>مرحبا، {customer.FirstName}!</h2>

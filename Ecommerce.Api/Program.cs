@@ -108,16 +108,33 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// تطبيق هجرات قاعدة البيانات (Migrations) تلقائياً عند تشغيل الحاوية في السحابة
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<Ecommerce.Infrastructure.Data.AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
+// إتاحة واجهة التوثيق والاختبار Scalar دائماً (حتى في بيئة Production للـ Demo)
+app.MapOpenApi();
+app.MapScalarApiReference(options =>
+{
+    options.Title = "E-Commerce & Payment Platform API (Live Demo)";
+    options.Theme = ScalarTheme.DeepSpace;
+});
+
+
 // تفعيل شبكة الأمان للأخطاء العالمية في أول الـ Pipeline 🛡️
 app.UseExceptionHandler(); 
 
+/* اغلاق تشغيل scalar في بيئة ال development لاتاحتها في بيئة ال Production
 //  إعداد خط الإنتاج البرمجي (HTTP Request Pipeline / Middlewares) ---
-if (app.Environment.IsDevelopment())
+ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference(); // تفعيل واجهة Scalar الرائعة لـ .NET 10 🔥
 }
-
+*/
 app.UseHttpsRedirection();
 
 app.UseCors("AllowStoreFrontend"); // تفعيل درع حماية الطلبات الخارجية (تفعيل سياسة CORS) 🛡️
@@ -130,8 +147,14 @@ app.UseAuthorization();  // التحقق من الصلاحيات 🔐
 app.UseSerilogRequestLogging();
 
 
-// مسارات المنتجات (Products Endpoints)
 
+// (في بيئة ال production ) توجيه الصفحة الرئيسية تلقائياً إلى واجهة Scalar لسهولة التصفح
+app.MapGet("/", () => Results.Redirect("/scalar"));
+
+
+//============================================//
+//--- مسارات المنتجات (Products Endpoints)---//
+//============================================//
 
 //---- جلب جميع المنتجات او وفق شروط فلترة معينة
 app.MapGet("/api/products" , async ([AsParameters] ProductQueryParameters queryParameters  , [FromServices] ProductService service) =>
@@ -228,8 +251,9 @@ app.MapGet("/api/products" , async ([AsParameters] ProductQueryParameters queryP
 }).RequireAuthorization(policy => policy.RequireRole("Admin"));
 
 
-
-// --- مسارات الفئات( Categories Endpoints)
+//==============================================//
+// --- مسارات الفئات( Categories Endpoints)--- //
+//==============================================//
 
 // جلب فئة محددة برقم ال id
 app.MapGet("/api/categories/{id}", async (int id , CategoryService service) =>

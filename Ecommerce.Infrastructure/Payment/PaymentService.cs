@@ -32,6 +32,8 @@ public class PaymentService : IPaymentService
     // 1. إنشاء جلسة دفع حقيقية وإرجاع رابط يعمل في المتصفح
     public async Task<PaymentResponse> CreateCheckoutSessionAsync(int customerId ,PaymentRequest request)
     {
+        var baseUrl = _configuration["AppSettings:BaseUrl"] ?? "http://localhost:5123";
+
         var order = await _context.Orders.FindAsync(request.OrderId);
         if (order is null)
             throw new KeyNotFoundException("الطلب المالي المحدد غير موجود!");
@@ -46,8 +48,8 @@ public class PaymentService : IPaymentService
         var options = new SessionCreateOptions // انشاء كائن من الكلاس stripe.checkout.sessionCreateOptions
         {
           Mode = "payment",
-          SuccessUrl = $"http://localhost:5123/payment-success?orderId={order.Id}", // في المشاريع الحقيقية مسؤولية وضع هذا الرابط هو frontend لتوجيهه لصفحة معينة في الموقع مثل https://mystore.com 
-          CancelUrl = $"http://localhost:5123/payment-cancel?orderId={order.Id}", // في المشاريع الحقيقية مسؤولية وضع هذا الرابط هو frontend لتوجيهه لصفحة معينة في الموقع مثل https://mystore.com
+          SuccessUrl = $"{baseUrl}/payment-success?orderId={order.Id}", // في المشاريع الحقيقية مسؤولية وضع هذا الرابط هو frontend لتوجيهه لصفحة معينة في الموقع مثل https://mystore.com 
+          CancelUrl = $"{baseUrl}/payment-cancel?orderId={order.Id}", // في المشاريع الحقيقية مسؤولية وضع هذا الرابط هو frontend لتوجيهه لصفحة معينة في الموقع مثل https://mystore.com
           ClientReferenceId = order.Id.ToString(),
           ExpiresAt = DateTime.UtcNow.AddMinutes(30),
           LineItems = new List<SessionLineItemOptions>
