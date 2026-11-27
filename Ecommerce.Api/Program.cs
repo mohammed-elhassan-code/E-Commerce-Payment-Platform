@@ -40,8 +40,23 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 
 //   تسجيل خدمات البنية التحتية (Infrastructure Services) ---
+// تهيئة  AppDbContext ليختار قاعدة البيانات تلقائياً حسب نص الاتصال:
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    // إذا كان نص الاتصال يحتوي على Host= فهو قادم من Neon PostgreSQL في السحابة
+    if (!string.IsNullOrEmpty(connectionString) && connectionString.Contains("Host="))
+    {
+        options.UseNpgsql(connectionString);
+    }
+    else
+    {
+        // استخدام sql Server المحلي
+        options.UseSqlServer(connectionString);
+    }
+});
+
 
     builder.Services.AddScoped<IProductRepository  , ProductRepository>();
     builder.Services.AddScoped<ICartRepository , CartRepository>();
@@ -111,9 +126,19 @@ var app = builder.Build();
 // تطبيق هجرات قاعدة البيانات (Migrations) تلقائياً عند تشغيل الحاوية في السحابة
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<Ecommerce.Infrastructure.Data.AppDbContext>();
-    await dbContext.Database.MigrateAsync();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    
+    if (app.Environment.IsDevelopment())
+    {
+        await dbContext.Database.MigrateAsync();
+    }
+    else
+    {
+        // إنشاء الجداول تلقائياً بصيغة PostgreSQL في بيئة السحابة
+        await dbContext.Database.EnsureCreatedAsync();
+    }
 }
+
 
 // إتاحة واجهة التوثيق والاختبار Scalar دائماً (حتى في بيئة Production للـ Demo)
 app.MapOpenApi();
