@@ -31,6 +31,9 @@ try
     
 Log.Information("Starting E-Commerce & Payment Platform API...");
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ربط Serilog مع إعدادات appsettings.json
