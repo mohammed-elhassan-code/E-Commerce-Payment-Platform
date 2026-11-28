@@ -115,13 +115,14 @@ builder.Services.AddProblemDetails();
 //اعداد سياسة CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowStoreFrontend", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://my-secure-store.com") // رابط واجهة المتجر الحقيقي المعتمد للشركة 🌐
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.AllowAnyOrigin()   // السماح بالطلبات من أي نطاق (مهم للـ Live Demo)
+              .AllowAnyMethod()   // السماح بكل أنواع الطلبات (GET, POST, PUT, PATCH, DELETE)
+              .AllowAnyHeader();  // السماح بكل الترويسات (مثل Authorization و Content-Type)
     });
 });
+
 
 
 var app = builder.Build();
@@ -165,7 +166,7 @@ app.UseExceptionHandler();
 */
 app.UseHttpsRedirection();
 
-app.UseCors("AllowStoreFrontend"); // تفعيل درع حماية الطلبات الخارجية (تفعيل سياسة CORS) 🛡️
+app.UseCors("AllowAll"); // تفعيل درع حماية الطلبات الخارجية (تفعيل سياسة CORS) 🛡️
 
 
 app.UseAuthentication(); // التعرف على الهوية 👤
